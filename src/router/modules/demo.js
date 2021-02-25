@@ -26,5 +26,13 @@ export default [
         ]
       }
     ]
+  },
+  {
+    path: '/demo2',
+    name: 'Demo2',
+    component: () => import('@/views/demo/demo2'),
+    meta: {
+      title: '展示用2'
+    }
   }
 ]
