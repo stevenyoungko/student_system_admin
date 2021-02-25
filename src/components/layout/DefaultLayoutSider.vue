@@ -118,7 +118,7 @@ export default {
     -webkit-transition: all .3s;
     transition: all .3s;
     overflow: hidden;
-    background-color: #002140;
+    background-color: @sideBar-logo;
     h1{
       color: #fff;
       font-size: 20px;

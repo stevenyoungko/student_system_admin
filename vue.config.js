@@ -44,5 +44,18 @@ module.exports = {
         '@': resolve('src')
       }
     }
+  },
+  chainWebpack: config => {
+    // 需要安装 style-resources-loader (与 stylus 一致)
+    const oneOfsMap = config.module.rule('less').oneOfs.store
+    oneOfsMap.forEach(item => {
+      item
+        .use('style-resources-loader')
+        .loader('style-resources-loader')
+        .options({
+          patterns: ['./src/styles/variables.less']
+        })
+        .end()
+    })
   }
 }

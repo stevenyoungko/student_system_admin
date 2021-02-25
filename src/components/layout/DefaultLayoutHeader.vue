@@ -66,7 +66,7 @@ export default {
 <style lang="less">
 .layout-header {
   height: 64px;
-  background-color:#ffffff;
+  background-color:@white;
   box-shadow: 0 2px 8px rgba(0,0,0, 0.15);
   z-index: 10;
   display: flex;
@@ -107,7 +107,7 @@ export default {
   cursor: pointer;
   transition: color .3s;
   &:hover{
-    color: #1890ff;
+    color: @Primary-hover;
   }
 }
 </style>
