@@ -20,6 +20,11 @@ export const constantRoutes = [
     }
   },
   {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
     path: '/',
     redirect: '/dashboard',
     component: DefaultLayout,
@@ -27,7 +32,8 @@ export const constantRoutes = [
       ...dashboard,
       ...demo
     ]
-  }
+  },
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const router = new VueRouter({
