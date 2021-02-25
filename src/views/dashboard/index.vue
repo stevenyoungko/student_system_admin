@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="demo">
     Dashboard
   </div>
 </template>
@@ -10,6 +10,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="less" scoped>
+.demo {
+  background-color: white;
+  height: 100%;
+}
 </style>

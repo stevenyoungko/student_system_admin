@@ -4,7 +4,10 @@
     <a-layout class="layout-body">
       <LayoutHeader :collapsed="collapsed" @toggleCollapse="toggleCollapse" />
       <div class="layout-body-content">
-        <router-view />
+        <TagsView />
+        <div class="main-container">
+          <router-view />
+        </div>
       </div>
     </a-layout>
   </a-layout>
@@ -13,12 +16,14 @@
 <script>
 import LayoutHeader from '@/components/layout/DefaultLayoutHeader'
 import LayoutBodySider from '@/components/layout/DefaultLayoutSider'
+import TagsView from './components/tagsView/index'
 
 export default {
   name: 'DefaultLayout',
   components: {
     LayoutHeader,
-    LayoutBodySider
+    LayoutBodySider,
+    TagsView
   },
   data() {
     return {
@@ -48,10 +53,19 @@ export default {
     &-content {
       flex: 1;
       background-color: #f0f2f5;
-      padding: 0 12px;
+      padding: 6px 6px 6px 16px;
       height: 100%;
       overflow: auto;
     }
   }
+}
+
+.main-container {
+  height: calc(100% - 40px);
+  position: relative;
+  padding: 0;
+  overflow-x: auto;
+  margin-top: -16px;
+  margin-left: -10px;
 }
 </style>
