@@ -5,9 +5,7 @@
       <LayoutHeader :collapsed="collapsed" @toggleCollapse="toggleCollapse" />
       <div class="layout-body-content">
         <TagsView />
-        <div class="main-container">
-          <router-view />
-        </div>
+        <AppMain />
       </div>
     </a-layout>
   </a-layout>
@@ -17,13 +15,15 @@
 import LayoutHeader from '@/components/layout/DefaultLayoutHeader'
 import LayoutBodySider from '@/components/layout/DefaultLayoutSider'
 import TagsView from './components/tagsView/index'
+import AppMain from './components/AppMain/index'
 
 export default {
   name: 'DefaultLayout',
   components: {
     LayoutHeader,
     LayoutBodySider,
-    TagsView
+    TagsView,
+    AppMain
   },
   data() {
     return {
@@ -58,14 +58,5 @@ export default {
       overflow: auto;
     }
   }
-}
-
-.main-container {
-  height: calc(100% - 40px);
-  position: relative;
-  padding: 0;
-  overflow-x: auto;
-  margin-top: -16px;
-  margin-left: -10px;
 }
 </style>
