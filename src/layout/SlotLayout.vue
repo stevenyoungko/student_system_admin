@@ -12,6 +12,7 @@ export default {
 
 <style lang="less">
 .slot-layout {
-  height: 100%;
+  display: flex;
+  flex: 1;
 }
 </style>

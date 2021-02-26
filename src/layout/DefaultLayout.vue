@@ -1,9 +1,9 @@
 <template>
-  <a-layout class="layout">
+  <a-layout class="layout beauty-scroll">
     <LayoutBodySider :collapsed="collapsed" :collapsible="true" />
     <a-layout class="layout-body">
       <LayoutHeader :collapsed="collapsed" @toggleCollapse="toggleCollapse" />
-      <div class="layout-body-content">
+      <div class="layout-body-content beauty-scroll">
         <TagsView />
         <AppMain />
       </div>
@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import LayoutHeader from '@/components/layout/DefaultLayoutHeader'
-import LayoutBodySider from '@/components/layout/DefaultLayoutSider'
+import LayoutHeader from './components/header/index'
+import LayoutBodySider from './components/sider/index'
 import TagsView from './components/tagsView/index'
 import AppMain from './components/AppMain/index'
 
@@ -40,7 +40,6 @@ export default {
 
 <style lang="less">
 .layout {
-  background-color:#888888;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -52,10 +51,10 @@ export default {
 
     &-content {
       flex: 1;
-      background-color: #f0f2f5;
-      padding: 6px 6px 6px 16px;
-      height: 100%;
+      padding-top: 6px;
       overflow: auto;
+      display: flex;
+      flex-direction: column;
     }
   }
 }

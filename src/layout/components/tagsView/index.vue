@@ -91,10 +91,9 @@ export default {
 
 <style scoped lang="less">
 .tab-container {
-  // margin-top: -16px;
+  padding-left: 16px;
+  min-height: 56px;
   .tab{
-    margin: 0 -16px;
-    padding: 0 16px;
     font-size: 14px;
     user-select: none;
     transition: all 0.2s;

@@ -41,12 +41,10 @@ export default {
 
 <style lang="less" scoped>
 .app-main {
-  height: calc(100% - 40px);
-  position: relative;
-  padding: 0;
-  overflow-x: auto;
+  flex: 1;
+  padding: 0px 6px 6px 6px;
   margin-top: -16px;
-  margin-left: -10px;
+  display: flex;
   background: @white;
 }
 </style>
