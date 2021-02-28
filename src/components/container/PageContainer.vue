@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div v-if="this.$slots['query'] && this.$slots['query-action']" class="query-group">
+    <div v-if="this.$slots['query'] && this.$slots['query-action']" :class="['query-group', this.$slots['control'] ? 'no-bottom-border' : '']">
       <div v-if="this.$slots['query']" class="query">
         <slot name="query"></slot>
       </div>
@@ -9,7 +9,7 @@
       </div>
     </div>
     <div v-if="this.$slots['control']" class="control">
-      <slot name="controll"></slot>
+      <slot name="control"></slot>
     </div>
     <div v-if="this.$slots['content']" class="content">
       <slot name="content"></slot>
@@ -25,7 +25,7 @@ export default {
   name: 'PageContainer',
   mounted() {
     if (this.$slots.default) {
-      console.warn('此不為預定的插槽，請確保你的插槽使用為正確的')
+      console.warn('[PageContainer] default slot 為非預留插槽，請確保你的插槽使用正確')
     }
   }
 }
@@ -37,9 +37,11 @@ export default {
   display: flex;
   flex-direction: column;
   background: @white;
-  * {
+  > div:not(.default), .default > .default-content {
+    position: relative;
     background: @white;
-    border-bottom-width: 1px solid @border-color;
+    padding: 8px;
+    border-bottom: 1px solid @border-color;
   }
 }
 
@@ -55,9 +57,16 @@ export default {
   }
   .query-action {
     min-width: 80px;
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    /deep/ button{
+      margin-bottom: 4px;
+    }
   }
 }
-.default {
-  background: @white;
+
+.no-bottom-border {
+  border-bottom: 0 !important;
 }
 </style>

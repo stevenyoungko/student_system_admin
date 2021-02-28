@@ -1,5 +1,5 @@
 <template>
-  <a-form-model class="query-container" v-bind="$attrs">
+  <a-form-model class="query-container" :layout="'inline'" v-bind="$attrs">
     <template v-if="hasPriority">
       <a-button class="query-container__collapseBtn" :icon="isCollapse ? 'caret-down' : 'caret-up'" @click="handleCollapse" />
       <div class="query-container__priority">
@@ -25,7 +25,6 @@
 import { addClass, removeClass } from '@/utils/dom'
 const elementUiCollapseHooks = {
   beforeEnter(el) {
-    console.log('el', el)
     addClass(el, 'collapse-transition')
     if (!el.dataset) el.dataset = {}
 
@@ -37,7 +36,6 @@ const elementUiCollapseHooks = {
     el.style.paddingBottom = 0
   },
   enter(el) {
-    console.log('el.scrollHeight', el.scrollHeight)
     el.dataset.oldOverflow = el.style.overflow
     if (el.scrollHeight !== 0) {
       el.style.height = el.scrollHeight + 'px'
@@ -116,7 +114,7 @@ export default {
   padding-right: 36px;
   & /deep/ .ant-form-item {
     margin: 4px;
-    background-color: @Light-80;
+    background-color: @form-item-background;
     padding: 0 12px;
     border-radius: 4px;
     // for required label to position from ant-form-item
@@ -133,12 +131,15 @@ export default {
         padding: 2px 4px;
         border-radius: 4px;
         color: #fff;
-        background-color: @Danger;
+        background-color: @danger;
         z-index: 2;
     }
   }
   &__priority {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
   }
   &__collapseBtn {
       position: absolute;
@@ -151,7 +152,10 @@ export default {
       }
   }
   &__optional {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
   }
 }
 </style>
