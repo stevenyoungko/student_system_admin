@@ -47,11 +47,9 @@ export default {
   &-body {
     display: flex;
     flex: 1;
-    overflow-y: auto;
-
     &-content {
       flex: 1;
-      padding-top: 6px;
+      padding: 6px;
       overflow: auto;
       display: flex;
       flex-direction: column;

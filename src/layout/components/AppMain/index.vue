@@ -42,7 +42,7 @@ export default {
 <style lang="less" scoped>
 .app-main {
   flex: 1;
-  padding: 0px 6px 6px 6px;
+  padding: 6px;
   margin-top: -16px;
   display: flex;
   background: @white;

@@ -107,7 +107,7 @@ export default {
   cursor: pointer;
   transition: color .3s;
   &:hover{
-    color: @Primary-hover;
+    color: @primary-hover;
   }
 }
 </style>
