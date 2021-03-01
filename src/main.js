@@ -11,9 +11,8 @@ import router from '@/router/index'
 import store from '@/store/index'
 
 // ant-design-vue
-import antDesign from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
-Vue.use(antDesign)
+// 按須加載需要的 antd 組件
+import '@/plugins/antd-vue'
 
 Vue.config.productionTip = false
 

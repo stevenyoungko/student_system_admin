@@ -37,6 +37,15 @@ module.exports = {
       }
     }
   },
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          javascriptEnabled: true
+        }
+      }
+    }
+  },
   configureWebpack: {
     name: name,
     resolve: {
@@ -48,6 +57,7 @@ module.exports = {
   chainWebpack: config => {
     // 需要安装 style-resources-loader (与 stylus 一致)
     const oneOfsMap = config.module.rule('less').oneOfs.store
+    console.log('oneOfsMap', oneOfsMap)
     oneOfsMap.forEach(item => {
       item
         .use('style-resources-loader')
