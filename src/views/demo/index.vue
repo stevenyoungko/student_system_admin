@@ -103,17 +103,17 @@
     <template #default>
       <div class="default-content">
         <h3>Button 展示</h3>
-        <CommonButton type="primary" text="Primary size large" size="large" style="margin-right: 6px;" @click="handleButtonClick('Primary')" />
-        <CommonButton type="danger" text="Danger size small" size="small" style="margin-right: 6px;" @click="handleButtonClick('Danger')" />
-        <CommonButton text="Default" style="margin-right: 6px;" @click="handleButtonClick('Default')" />
-        <CommonButton text="Default with disabled" disabled style="margin-right: 6px;" @click="handleButtonClick('Default')" />
-        <CommonButton type="dashed" text="Dashed with icon" icon="edit" style="margin-right: 6px;" @click="handleButtonClick('Default')" />
-        <CommonButton type="warning" text="type Warning" style="margin-right: 6px;" @click="handleButtonClick('Warning')" />
-        <CommonButton type="success" text="type Success" style="margin-right: 6px;" @click="handleButtonClick('Success')" />
-        <CommonButton
+        <DefaultButton type="primary" text="Primary size large" size="large" style="margin-right: 6px;" @click="handleButtonClick('Primary')" />
+        <DefaultButton type="danger" text="Danger size small" size="small" style="margin-right: 6px;" @click="handleButtonClick('Danger')" />
+        <DefaultButton text="Default" style="margin-right: 6px;" @click="handleButtonClick('Default')" />
+        <DefaultButton text="Default with disabled" disabled style="margin-right: 6px;" @click="handleButtonClick('Default')" />
+        <DefaultButton type="dashed" text="Dashed with icon" icon="edit" style="margin-right: 6px;" @click="handleButtonClick('Default')" />
+        <DefaultButton type="warning" text="type Warning" style="margin-right: 6px;" @click="handleButtonClick('Warning')" />
+        <DefaultButton type="success" text="type Success" style="margin-right: 6px;" @click="handleButtonClick('Success')" />
+        <DefaultButton
           :loading="loading"
           type="custom"
-          text="type Custom"
+          text="type Custom with loading"
           :color="{ textColor: 'white', default: '#13c2c2', hover: '#36cfc9', active: '#08979c'}"
           style="margin-right: 6px;"
           @click="handleButtonClick('Custom')"
@@ -121,7 +121,85 @@
       </div>
       <div class="default-content">
         <h3>Dialog 展示</h3>
-        <DefaultDialog />
+        <DefaultButton text="預設" style="margin-right: 6px;" @click="visible1 = true" />
+        <a-modal
+          v-model="visible1"
+          title="展示用"
+          @ok="visible1 = false"
+        >
+          <ScrollableDialogContainer>
+            <h4>預設內容高度限制為 : 55vh</h4>
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          </ScrollableDialogContainer>
+        </a-modal>
+        <DefaultButton text="可調整內容可視域" style="margin-right: 6px;" @click="visible2 = true" />
+        <a-modal
+          v-model="visible2"
+          title="展示用"
+          @ok="visible2 = false"
+        >
+          <ScrollableDialogContainer content-height="40vh">
+            <h4>調整內容高度限制為 : 40vh</h4>
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          </ScrollableDialogContainer>
+        </a-modal>
+        <DefaultButton text="自定義 footer" style="margin-right: 6px;" @click="visible3 = true" />
+        <a-modal
+          v-model="visible3"
+          title="展示用"
+        >
+          <ScrollableDialogContainer>
+            同 ant-design-vue 範例
+          </ScrollableDialogContainer>
+          <template slot="footer">
+            <DefaultButton type="warning" text="return" @click="handleReturn" />
+            <DefaultButton type="success" text="submit" @click="handleSubmit" />
+          </template>
+        </a-modal>
+        <DefaultButton text="自定義 title" style="margin-right: 6px;" @click="visible4 = true" />
+        <a-modal
+          v-model="visible4"
+          @ok="visible4 = false"
+        >
+          <template slot="title">
+            <span style="font-weight: 700; color: red">This is a custom title</span>
+          </template>
+          <ScrollableDialogContainer>
+            同 ant-design-vue 範例
+          </ScrollableDialogContainer>
+        </a-modal>
+      </div>
+      <div class="default-content">
+        <h3>Notification 展示</h3>
+        <DefaultButton text="預設通知" style="margin-right: 6px;" @click="basicNotify" />
+        <DefaultButton text="成功類型" style="margin-right: 6px;" @click="successNotify" />
+        <DefaultButton text="錯誤類型" style="margin-right: 6px;" @click="errorNotify" />
+        <DefaultButton text="警告類型" style="margin-right: 6px;" @click="warningNotify" />
+        <DefaultButton text="消息類型" style="margin-right: 6px;" @click="infoNotify" />
+        <DefaultButton text="自定義通知" style="margin-right: 6px;" @click="customNotify" />
+        <DefaultButton text="完整通知" style="margin-right: 6px;" @click="fullNotify" />
+      </div>
+      <div class="default-content">
+        <h3>Message 展示</h3>
+        <DefaultButton text="預設訊息" style="margin-right: 6px;" @click="basicMessage" />
+        <DefaultButton text="成功類型" style="margin-right: 6px;" @click="successMessage" />
+        <DefaultButton text="錯誤類型" style="margin-right: 6px;" @click="errorMessage" />
+        <DefaultButton text="警告類型" style="margin-right: 6px;" @click="warningMessage" />
+        <DefaultButton text="消息類型" style="margin-right: 6px;" @click="infoMessage" />
+        <DefaultButton text="自定義訊息" style="margin-right: 6px;" @click="customMessage" />
+        <DefaultButton text="完整訊息" style="margin-right: 6px;" @click="fullMessage" />
       </div>
     </template>
   </PageContainer>
@@ -130,15 +208,17 @@
 <script>
 import PageContainer from '@/components/container/PageContainer'
 import QueryContainer from '@/components/container/QueryContainer'
-import CommonButton from '@/components/button/DefaultButton'
-import DefaultDialog from '@/components/dialog/DefaultDialog'
+import DefaultButton from '@/components/button/DefaultButton'
+import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+
+import { notify, message } from '@/utils/notification'
 export default {
   name: 'Demo1',
   components: {
     PageContainer,
     QueryContainer,
-    CommonButton,
-    DefaultDialog
+    DefaultButton,
+    ScrollableDialogContainer
   },
   data() {
     const columns = [
@@ -190,7 +270,11 @@ export default {
       columns,
       editingKey: '',
       cacheData: data.map(item => ({ ...item })),
-      loading: false
+      loading: false,
+      visible1: false,
+      visible2: false,
+      visible3: false,
+      visible4: false
     }
   },
   mounted() {
@@ -238,11 +322,132 @@ export default {
       }
     },
     handleButtonClick(text) {
+      if (text === 'Custom') {
+        this.loading = true
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
+      }
       this.loading = true
       setTimeout(() => {
         this.loading = false
       }, 1000)
       console.log(`Hi I am ${text} button click event handler!!!`)
+    },
+    handleSubmit() {
+      console.log('submit')
+      this.visible3 = false
+    },
+    handleReturn() {
+      console.log('return')
+      this.visible3 = false
+    },
+    basicNotify() {
+      notify()
+    },
+    successNotify() {
+      notify('success', {
+        message: '成功的通知',
+        description: '這是一則成功的通知'
+      })
+    },
+    errorNotify() {
+      notify('error', {
+        message: '錯誤的通知',
+        description: '這是一則錯誤的通知'
+      })
+    },
+    warningNotify() {
+      notify('warning', {
+        message: '警告的通知',
+        description: '這是一則警告的通知'
+      })
+    },
+    infoNotify() {
+      notify('info', {
+        message: '消息的通知',
+        description: '這是一則消息的通知'
+      })
+    },
+    customNotify() {
+      notify('custom', {
+        message: '客製化通知',
+        description: '這是一則消息的通知，請點擊按鈕完成動作。',
+        icon: <a-icon type='question-circle' />,
+        key: 'customId',
+        duration: null,
+        btn: (h) => h('a-button', {
+          props: {
+            type: 'primary',
+            size: 'small'
+          },
+          on: {
+            click: () => { notify('close', { key: 'customId' }) }
+          }
+        }, '知道了')
+      })
+    },
+    fullNotify() {
+      var key = 'fullId'
+      notify('custom', {
+        message: '等待中...',
+        icon: <a-icon type='loading' />,
+        key
+      })
+      setTimeout(() => {
+        notify('success', {
+          message: '完成',
+          key
+        })
+      }, 1000)
+    },
+    basicMessage() {
+      message()
+    },
+    successMessage() {
+      message('success', {
+        content: '成功的訊息'
+      })
+    },
+    errorMessage() {
+      message('error', {
+        content: '錯誤的訊息'
+      })
+    },
+    warningMessage() {
+      message('warning', {
+        content: '警告的訊息'
+      })
+    },
+    infoMessage() {
+      message('info', {
+        content: '消息的訊息'
+      })
+    },
+    customMessage() {
+      message('custom', {
+        content: '客製化訊息，將於5秒後關閉...',
+        icon: <a-icon type='question-circle' />,
+        key: 'customId',
+        duration: 5,
+        onClose: () => {
+          console.log('custom message closed...')
+        }
+      })
+    },
+    fullMessage() {
+      var key = 'fullId'
+      message('custom', {
+        content: '等待中...',
+        icon: <a-icon type='loading' />,
+        key
+      })
+      setTimeout(() => {
+        message('success', {
+          content: '完成',
+          key
+        })
+      }, 1000)
     }
   }
 }
