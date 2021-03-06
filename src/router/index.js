@@ -6,7 +6,8 @@ import DefaultLayout from '@/layout/DefaultLayout.vue'
 
 // modules
 import dashboard from './modules/dashboard'
-import demo from './modules/demo'
+// import demo from './modules/demo'
+import setting from './modules/setting'
 
 Vue.use(VueRouter)
 
@@ -30,7 +31,7 @@ export const constantRoutes = [
     component: DefaultLayout,
     children: [
       ...dashboard,
-      ...demo
+      ...setting
     ]
   },
   { path: '*', redirect: '/404', hidden: true }
