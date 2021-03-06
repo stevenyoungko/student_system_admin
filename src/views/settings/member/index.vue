@@ -7,9 +7,9 @@
       <a-table :columns="columns" :data-source="data" bordered>
         <template slot="operation">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="編輯" size="small" style="margin-right: 6px;" />
-            <DefaultButton type="primary" text="修改權限" size="small" style="margin-right: 6px;" />
-            <DefaultButton type="warning" text="回復原始設定" size="small" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" />
+            <DefaultButton type="warning" text="回復原始設定" style="margin-right: 6px;" />
           </div>
         </template>
       </a-table>
@@ -18,6 +18,7 @@
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
+        :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
         @ok="submit"
@@ -62,23 +63,20 @@ export default {
     const columns = [
       {
         title: '帳號',
-        dataIndex: 'account',
-        width: '25%'
+        dataIndex: 'account'
       },
       {
         title: '密碼',
-        dataIndex: 'password',
-        width: '25%'
+        dataIndex: 'password'
       },
       {
         title: '姓名',
-        dataIndex: 'name',
-        width: '25%'
+        dataIndex: 'name'
       },
       {
         title: '操作',
         dataIndex: 'operation',
-        width: '25%',
+        width: '30%',
         scopedSlots: { customRender: 'operation' }
       }
     ]
