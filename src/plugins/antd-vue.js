@@ -2,6 +2,7 @@ import Vue from 'vue'
 import {
   Button,
   FormModel,
+  Form,
   Layout,
   Icon,
   Dropdown,
@@ -24,6 +25,7 @@ import {
 Layout.install(Vue)
 Menu.install(Vue)
 FormModel.install(Vue)
+Form.install(Vue)
 Radio.install(Vue)
 Button.install(Vue)
 Icon.install(Vue)
