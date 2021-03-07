@@ -25,7 +25,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 export default {
-  name: 'Overview',
+  name: 'TotalList',
   components: {
     PageContainer,
     DefaultButton
@@ -34,13 +34,16 @@ export default {
     return {
       data: [
         {
-          title: '兩天後到期名單:',
+          title: '已到期名單:'
         },
         {
-          title: '已到期名單:',
+          title: '兩天後到期名單:'
         },
         {
-          title: '未回覆名單:',
+          title: '未回覆名單:'
+        },
+        {
+          title: '官網後台名單:'
         }
       ]
     }
