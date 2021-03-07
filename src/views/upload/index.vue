@@ -2,13 +2,13 @@
   <PageContainer>
     <template #control>
       <a-form-model
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
+        :label-col="{ span: 2}"
+        :wrapper-col="{ span: 4}"
         layout="horizontal"
-        :model="typeForm"
+        :model="form"
       >
         <a-form-model-item label="課程類型">
-          <a-select v-model="typeForm.course">
+          <a-select v-model="form.course" @change="changeComponent">
             <a-select-option value="child">
               兒童課程
             </a-select-option>
@@ -20,22 +20,40 @@
         <a-form-model />
       </a-form-model>
     </template>
+    <template #content>
+      <components :is="currentComponent" />
+    </template>
   </PageContainer>
 </template>
 
 <script>
 import PageContainer from '@/components/container/PageContainer'
+import ChildForm from './components/ChildForm'
+import AdultForm from './components/AdultForm'
 export default {
   name: 'Upload',
   components: {
-    PageContainer
+    PageContainer,
+    ChildForm,
+    AdultForm
   },
   data() {
     return {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 4 },
-      typeForm: {
+      form: {
         course: 'child'
+      },
+      currentComponent: ChildForm
+    }
+  },
+  methods: {
+    changeComponent() {
+      switch (this.form.course) {
+        case 'child':
+          this.currentComponent = ChildForm
+          break
+        case 'adult':
+          this.currentComponent = AdultForm
+          break
       }
     }
   }
