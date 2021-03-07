@@ -13,7 +13,12 @@
                 <span>5筆</span>
               </span>
             </a-list-item-meta>
-            <DefaultButton slot="actions" type="primary" text="查看" style="margin-right: 6px;" />
+            <DefaultButton
+              slot="actions"
+              type="primary"
+              text="查看"
+              @click.native="showDetail(item.path)"
+            />
           </a-list-item>
         </a-list>
       </a-card>
@@ -34,18 +39,27 @@ export default {
     return {
       data: [
         {
-          title: '已到期名單:'
+          title: '已到期名單:',
+          path: 'expired-list'
         },
         {
-          title: '兩天後到期名單:'
+          title: '兩天後到期名單:',
+          path: 'two-days-list'
         },
         {
-          title: '未回覆名單:'
+          title: '未回覆名單:',
+          path: 'unanswer-list'
         },
         {
-          title: '官網後台名單:'
+          title: '官網後台名單:',
+          path: 'official-list'
         }
       ]
+    }
+  },
+  methods: {
+    showDetail(path) {
+      this.$router.push(path)
     }
   }
 }
