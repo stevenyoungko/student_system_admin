@@ -6,7 +6,7 @@ import DefaultLayout from '@/layout/DefaultLayout.vue'
 
 // modules
 import dashboard from './modules/dashboard'
-// import demo from './modules/demo'
+import demo from './modules/demo'
 import setting from './modules/setting'
 import overview from './modules/overview'
 
@@ -32,6 +32,7 @@ export const constantRoutes = [
     component: DefaultLayout,
     children: [
       ...dashboard,
+      ...demo,
       ...setting,
       ...overview
     ]
