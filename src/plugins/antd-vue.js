@@ -21,7 +21,8 @@ import {
   Alert,
   Modal,
   List,
-  Card
+  Card,
+  Upload
 } from 'ant-design-vue'
 
 Layout.install(Vue)
@@ -48,3 +49,4 @@ Alert.install(Vue)
 Modal.install(Vue)
 List.install(Vue)
 Card.install(Vue)
+Upload.install(Vue)

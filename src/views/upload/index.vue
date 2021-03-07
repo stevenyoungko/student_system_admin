@@ -2,10 +2,10 @@
   <PageContainer>
     <template #control>
       <a-form-model
-        :label-col="{ span: 2}"
-        :wrapper-col="{ span: 4}"
         layout="horizontal"
         :model="form"
+        :label-col="{ span: 2}"
+        :wrapper-col="{ span: 4}"
       >
         <a-form-model-item label="課程類型">
           <a-select v-model="form.course" @change="changeComponent">
@@ -17,7 +17,23 @@
             </a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model />
+        <a-form-model-item label="批次上傳">
+          <div style="display: flex; align-items: flex-start;">
+            <a-upload
+              name="file"
+              :multiple="true"
+            >
+              <a-button style="margin-right: 16px;">
+                <a-icon type="upload" />
+                Upload
+              </a-button>
+            </a-upload>
+            <a-button type="primary" style="margin-top: 4px;">
+              上傳
+            </a-button>
+          </div>
+          <a-form-model />
+        </a-form-model-item>
       </a-form-model>
     </template>
     <template #content>
