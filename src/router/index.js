@@ -9,6 +9,7 @@ import dashboard from './modules/dashboard'
 import demo from './modules/demo'
 import setting from './modules/setting'
 import overview from './modules/overview'
+import upload from './modules/upload'
 
 Vue.use(VueRouter)
 
@@ -34,7 +35,8 @@ export const constantRoutes = [
       ...dashboard,
       ...demo,
       ...setting,
-      ...overview
+      ...overview,
+      ...upload
     ]
   },
   { path: '*', redirect: '/404', hidden: true }
