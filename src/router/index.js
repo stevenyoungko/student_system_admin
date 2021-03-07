@@ -8,6 +8,7 @@ import DefaultLayout from '@/layout/DefaultLayout.vue'
 import dashboard from './modules/dashboard'
 import demo from './modules/demo'
 import setting from './modules/setting'
+import overview from './modules/overview'
 
 Vue.use(VueRouter)
 
@@ -32,7 +33,8 @@ export const constantRoutes = [
     children: [
       ...dashboard,
       ...demo,
-      ...setting
+      ...setting,
+      ...overview
     ]
   },
   { path: '*', redirect: '/404', hidden: true }
