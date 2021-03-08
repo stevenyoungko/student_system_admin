@@ -83,7 +83,8 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
-        listSource: ''
+        listSource: '',
+        contactCount: ''
       },
       dialog: {
         title: '',
