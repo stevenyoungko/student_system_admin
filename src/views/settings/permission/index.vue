@@ -40,6 +40,16 @@
             <a-form-model-item ref="name" label="姓名" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
+            <a-form-model-item label="權限" prop="permission">
+              <a-radio-group v-model="form.permission">
+                <a-radio value="1">
+                  全體
+                </a-radio>
+                <a-radio value="2">
+                  總部
+                </a-radio>
+              </a-radio-group>
+            </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
       </a-modal>
@@ -100,7 +110,8 @@ export default {
       form: {
         account: '',
         password: '',
-        name: ''
+        name: '',
+        permission: '1'
       },
       rules: {
         account: [
