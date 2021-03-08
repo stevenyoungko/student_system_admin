@@ -11,31 +11,31 @@ export default [
       {
         path: 'permission',
         name: 'Permission',
-        component: () => import('@/layout/SlotLayout'),
+        component: () => import('@/views/settings/permission'),
         meta: {
           title: '權限設定',
           icon: 'lock'
-        },
-        children: [
-          {
-            path: 'member',
-            name: 'Member',
-            component: () => import('@/views/settings/member'),
-            meta: {
-              title: '帳號管理',
-              icon: 'user'
-            }
-          },
-          {
-            path: 'role',
-            name: 'Role',
-            component: () => import('@/views/settings/role'),
-            meta: {
-              title: '角色管理',
-              icon: 'user'
-            }
-          }
-        ]
+        }
+        // children: [
+        //   {
+        //     path: 'member',
+        //     name: 'Member',
+        //     component: () => import('@/views/settings/member'),
+        //     meta: {
+        //       title: '帳號管理',
+        //       icon: 'user'
+        //     }
+        //   },
+        //   {
+        //     path: 'role',
+        //     name: 'Role',
+        //     component: () => import('@/views/settings/role'),
+        //     meta: {
+        //       title: '角色管理',
+        //       icon: 'user'
+        //     }
+        //   }
+        // ]
       },
       {
         path: 'admissions',

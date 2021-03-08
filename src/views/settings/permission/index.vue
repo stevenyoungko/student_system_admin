@@ -4,11 +4,11 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table :columns="columns" :data-source="data" bordered>
         <template slot="operation">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" />
-            <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" />
+            <DefaultButton type="warning" text="回復原始設定" style="margin-right: 6px;" />
           </div>
         </template>
       </a-table>
@@ -31,7 +31,13 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item ref="name" label="角色名稱" prop="name">
+            <a-form-model-item ref="name" label="帳號" prop="account">
+              <a-input v-model="form.name" />
+            </a-form-model-item>
+            <a-form-model-item ref="password" label="密碼" prop="password">
+              <a-input v-model="form.name" />
+            </a-form-model-item>
+            <a-form-model-item ref="name" label="姓名" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
           </a-form-model>
@@ -46,7 +52,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 export default {
-  name: 'Role',
+  name: 'Permission',
   components: {
     PageContainer,
     DefaultButton,
@@ -55,27 +61,36 @@ export default {
   data() {
     const columns = [
       {
-        title: '角色名稱',
-        dataIndex: 'role',
-        width: '50%'
+        title: '帳號',
+        dataIndex: 'account'
+      },
+      {
+        title: '密碼',
+        dataIndex: 'password'
+      },
+      {
+        title: '姓名',
+        dataIndex: 'name'
       },
       {
         title: '操作',
         dataIndex: 'operation',
-        width: '50%',
+        width: '30%',
         scopedSlots: { customRender: 'operation' }
       }
     ]
+
+    const data = []
+    for (let i = 1; i < 11; i++) {
+      data.push({
+        account: `account ${i}`,
+        password: `password ${i}`,
+        name: `Steven ${i}`
+      })
+    }
     return {
       columns,
-      tableData: [
-        {
-          role: '管理者'
-        },
-        {
-          role: '一般使用者'
-        }
-      ],
+      data,
       dialog: {
         title: '',
         visible: false
@@ -83,10 +98,18 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
+        account: '',
+        password: '',
         name: ''
       },
       rules: {
         account: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        name: [
           { required: true, message: '必填', trigger: 'blur' }
         ]
       }
