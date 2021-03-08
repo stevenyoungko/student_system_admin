@@ -22,7 +22,8 @@ import {
   Modal,
   List,
   Card,
-  Upload
+  Upload,
+  InputNumber
 } from 'ant-design-vue'
 
 Layout.install(Vue)
@@ -50,3 +51,4 @@ Modal.install(Vue)
 List.install(Vue)
 Card.install(Vue)
 Upload.install(Vue)
+InputNumber.install(Vue)
