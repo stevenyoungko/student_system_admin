@@ -1,5 +1,8 @@
 <template>
   <div class="page-container">
+    <div v-if="this.$slots['query-control']" class="control">
+      <slot name="query-control"></slot>
+    </div>
     <div v-if="this.$slots['query'] && this.$slots['query-action']" :class="['query-group', this.$slots['control'] ? 'no-bottom-border' : '']">
       <div v-if="this.$slots['query']" class="query">
         <slot name="query"></slot>

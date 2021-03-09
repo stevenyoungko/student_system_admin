@@ -1,21 +1,33 @@
 <template>
   <PageContainer>
-    <template #control>
-      <DefaultButton type="primary" text="匯出excel" style="margin-right: 6px;" />
-      <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
-      <DefaultButton type="primary" text="設定群組" style="margin-right: 6px;" />
+    <template #query-control>
+      <a-form-model
+        layout="inline"
+        :model="form"
+      >
+        <a-form-model-item label="課程類型" style="margin-bottom: 0;">
+          <a-select v-model="form.course" style="width: 150px;">
+            <a-select-option value="child">
+              兒童課程
+            </a-select-option>
+            <a-select-option value="adult">
+              成人課程
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
     </template>
     <template #query>
       <QueryContainer>
         <template #priority>
           <a-form-model-item label="學員姓名">
-            <a-input v-model="form.name" placeholder="請學員姓名" />
+            <a-input v-model="query.name" placeholder="請學員姓名" />
           </a-form-model-item>
           <a-form-model-item label="電話號碼">
-            <a-input v-model="form.phone" placeholder="請電話號碼" />
+            <a-input v-model="query.phone" placeholder="請電話號碼" />
           </a-form-model-item>
           <a-form-model-item label="名單來源">
-            <a-select v-model="form.listSource" placeholder="請選擇名單來源" style="width: 180px;">
+            <a-select v-model="query.listSource" placeholder="請選擇名單來源" style="width: 180px;">
               <a-select-option value="shanghai">
                 後台
               </a-select-option>
@@ -27,7 +39,7 @@
         </template>
         <template>
           <a-form-model-item label="名單類型">
-            <a-checkbox-group v-model="form.listType">
+            <a-checkbox-group v-model="query.listType">
               <a-checkbox value="1" name="type">
                 不限
               </a-checkbox>
@@ -49,7 +61,7 @@
             </a-checkbox-group>
           </a-form-model-item>
           <a-form-model-item label="招生區間">
-            <a-select v-model="form.admissionsRange" placeholder="請選擇招生區間" style="width: 180px;">
+            <a-select v-model="query.admissionsRange" placeholder="請選擇招生區間" style="width: 180px;">
               <a-select-option value="1">
                 不限
               </a-select-option>
@@ -60,20 +72,20 @@
           </a-form-model-item>
           <a-form-model-item label="日期區間">
             <a-range-picker
-              v-model="form.dateRange"
+              v-model="query.dateRange"
               value-format="YYYY-MM-DD"
               :placeholder="['开始日期', '结束日期']"
             />
           </a-form-model-item>
           <a-form-model-item label="生日區間">
             <a-range-picker
-              v-model="form.dateRange"
+              v-model="query.dateRange"
               value-format="YYYY-MM-DD"
               :placeholder="['开始日期', '结束日期']"
             />
           </a-form-model-item>
           <a-form-model-item label="群組">
-            <a-select v-model="form.group" placeholder="請選擇群組" style="width: 180px;">
+            <a-select v-model="query.group" placeholder="請選擇群組" style="width: 180px;">
               <a-select-option value="1">
                 不限
               </a-select-option>
@@ -83,7 +95,7 @@
             </a-select>
           </a-form-model-item>
           <a-form-model-item label="活動名稱">
-            <a-select v-model="form.activity" placeholder="請選擇活動名稱" style="width: 180px;">
+            <a-select v-model="query.activity" placeholder="請選擇活動名稱" style="width: 180px;">
               <a-select-option value="1">
                 不限
               </a-select-option>
@@ -93,7 +105,7 @@
             </a-select>
           </a-form-model-item>
           <a-form-model-item label="年齡">
-            <a-select v-model="form.age" placeholder="請選擇年齡" style="width: 180px;">
+            <a-select v-model="query.age" placeholder="請選擇年齡" style="width: 180px;">
               <a-select-option value="1">
                 未足齡
               </a-select-option>
@@ -116,6 +128,11 @@
     </template>
     <template #query-action>
       <a-button icon="search">查詢</a-button>
+    </template>
+    <template #control>
+      <DefaultButton type="primary" text="匯出excel" style="margin-right: 6px;" />
+      <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
+      <DefaultButton type="primary" text="設定群組" style="margin-right: 6px;" />
     </template>
     <template #content>
       <a-table
@@ -309,7 +326,7 @@ export default {
       }
     ]
     return {
-      form: {
+      query: {
         name: '',
         phone: '',
         listSource: undefined,
@@ -320,6 +337,9 @@ export default {
         group: '1',
         activity: '1',
         age: '1'
+      },
+      form: {
+        course: ''
       },
       columns,
       tableData: [
