@@ -3,7 +3,7 @@
     <a-tab-pane v-for="view in visitedViews" :key="view.path">
       <div slot="tab" class="tab">
         <div class="title" @click="onTabClick(view)">{{ view.title }}</div>
-        <a-icon type="close" class="icon-close" @click.stop="closeTag(view)" />
+        <a-icon v-if="!view.meta.affix" type="close" class="icon-close" @click.stop="closeTag(view)" />
       </div>
     </a-tab-pane>
   </a-tabs>

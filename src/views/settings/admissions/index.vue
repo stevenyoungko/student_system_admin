@@ -63,23 +63,20 @@ export default {
     const columns = [
       {
         title: '招生名稱',
-        dataIndex: 'title',
-        width: '30%'
+        dataIndex: 'title'
       },
       {
         title: '起始時間',
-        dataIndex: 'start_at',
-        width: '20%'
+        dataIndex: 'start_at'
       },
       {
         title: '結束時間',
-        dataIndex: 'end_at',
-        width: '20%'
+        dataIndex: 'end_at'
       },
       {
         title: '操作',
         dataIndex: 'operation',
-        width: '30%',
+        width: '20%',
         scopedSlots: { customRender: 'operation' }
       }
     ]

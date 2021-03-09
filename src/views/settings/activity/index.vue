@@ -80,6 +80,7 @@ export default {
       {
         title: '操作',
         dataIndex: 'operation',
+        width: '20%',
         scopedSlots: { customRender: 'operation' }
       }
     ]
