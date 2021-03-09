@@ -37,6 +37,7 @@ export default {
   display: flex;
   flex-direction: column;
   background: @white;
+  width: calc(100vw - 280px);
   > div:not(.default), .default > .default-content {
     position: relative;
     background: @white;
