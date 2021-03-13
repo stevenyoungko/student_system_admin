@@ -6,7 +6,7 @@
         :model="form"
       >
         <a-form-model-item label="課程類型" style="margin-bottom: 0;">
-          <a-select v-model="form.course" style="width: 150px;">
+          <a-select v-model="form.course" style="width: 150px;" placeholder="請選擇課程類型">
             <a-select-option value="child">
               兒童課程
             </a-select-option>
@@ -132,7 +132,7 @@
     <template #control>
       <DefaultButton type="primary" text="匯出excel" style="margin-right: 6px;" />
       <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
-      <DefaultButton type="primary" text="設定群組" style="margin-right: 6px;" />
+      <DefaultButton type="primary" text="設定群組" style="margin-right: 6px;" @click="showSetting" />
     </template>
     <template #content>
       <a-table
@@ -159,6 +159,10 @@
         :data="detailDialog.data"
         :show-modal.sync="detailDialog.show"
       />
+      <SettingDialog
+        :selected-row-keys="selectedRowKeys"
+        :show-modal.sync="settingDialog.show"
+      />
     </template>
   </PageContainer>
 </template>
@@ -168,13 +172,15 @@ import PageContainer from '@/components/container/PageContainer'
 import QueryContainer from '@/components/container/QueryContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import DetailDialog from './components/DetailDialog'
+import SettingDialog from './components/SettingDialog'
 export default {
   name: 'SearchList',
   components: {
     PageContainer,
     QueryContainer,
     DefaultButton,
-    DetailDialog
+    DetailDialog,
+    SettingDialog
   },
   data() {
     const columns = [
@@ -249,10 +255,78 @@ export default {
         age: '1'
       },
       form: {
-        course: ''
+        course: undefined
       },
       columns,
       tableData: [
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
         {
           childName: '123',
           birthday: '',
@@ -292,6 +366,9 @@ export default {
       detailDialog: {
         show: false,
         data: {}
+      },
+      settingDialog: {
+        show: false
       }
     }
   },
@@ -303,6 +380,9 @@ export default {
     showDetail(item) {
       this.detailDialog.show = true
       this.detailDialog.data = item
+    },
+    showSetting() {
+      this.settingDialog.show = true
     }
   }
 }
