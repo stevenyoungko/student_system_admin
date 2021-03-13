@@ -140,6 +140,7 @@
         :data-source="tableData"
         bordered
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :scroll="{ x: 1950, y: 350 }"
       >
         <template slot="crm" slot-scope="text">
           <a-icon v-if="text" type="check-circle" :style="{color: '#53C519'}" />
@@ -186,58 +187,73 @@ export default {
     const columns = [
       {
         title: '小朋友姓名',
-        dataIndex: 'childName'
+        dataIndex: 'childName',
+        fixed: 'left',
+        width: 150
       },
       {
         title: '小朋友生日',
-        dataIndex: 'birthday'
+        dataIndex: 'birthday',
+        width: 150
       },
       {
         title: '結論',
-        dataIndex: 'conclustion'
+        dataIndex: 'conclustion',
+        width: 150
       },
       {
         title: '方便聯繫時段',
-        dataIndex: 'contact'
+        dataIndex: 'contact',
+        width: 150
       },
       {
         title: '消息來源',
-        dataIndex: 'newsSource'
+        dataIndex: 'newsSource',
+        width: 150
       },
       {
         title: '填寫日期',
-        dataIndex: 'writeDate'
+        dataIndex: 'writeDate',
+        width: 150
       },
       {
         title: '追蹤碼',
-        dataIndex: 'trackCode'
+        dataIndex: 'trackCode',
+        width: 150
       },
       {
         title: '轉拋CRM',
         dataIndex: 'crm',
         align: 'center',
+        width: 150,
         scopedSlots: { customRender: 'crm' }
       },
       {
         title: '回覆狀況',
         dataIndex: 'reply',
+        width: 150,
         scopedSlots: { customRender: 'reply' }
       },
       {
         title: '預約狀況',
-        dataIndex: 'reservation'
+        dataIndex: 'reservation',
+        width: 150
       },
       {
         title: '報到狀況',
-        dataIndex: 'report'
+        dataIndex: 'report',
+        width: 150
       },
       {
         title: '報名狀況',
-        dataIndex: 'register'
+        dataIndex: 'register',
+        width: 150
       },
       {
         title: '操作',
         dataIndex: 'operation',
+        fixed: 'right',
+        width: 150,
         scopedSlots: { customRender: 'operation' }
       }
     ]
@@ -259,6 +275,176 @@ export default {
       },
       columns,
       tableData: [
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
+        {
+          childName: '123',
+          birthday: '',
+          contact: '1',
+          newsSource: '1',
+          writeDate: '2021-03-12',
+          trackCode: '123123',
+          crm: 1,
+          appointment: '1080910063653',
+          listSource: '123',
+          parentName: '123',
+          gender: '男',
+          cellphone: '0928376453',
+          phone: '0228736473',
+          address: '123',
+          email: '123',
+          teachCenter: '1',
+          listType: '1',
+          class: '1',
+          sibling: '兄',
+          contactPerson: '爸爸',
+          experience: '無',
+          personality: '活潑',
+          musicExperience: '無',
+          otherExperience: '無',
+          caregiver: '爸爸',
+          classTime: '早上',
+          remark: '無',
+          conclustion: '無',
+          reply: '1',
+          reservation: '1',
+          report: '1',
+          register: '1'
+        },
         {
           childName: '123',
           birthday: '',
