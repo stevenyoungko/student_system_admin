@@ -5,9 +5,12 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="data" bordered>
-        <template slot="operation">
+        <template slot="permission" slot-scope="text">
+          <span v-text="text ? '總部' : '全體'"></span>
+        </template>
+        <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="warning" text="回復原始設定" style="margin-right: 6px;" />
           </div>
         </template>
@@ -31,22 +34,22 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item ref="name" label="帳號" prop="account">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="帳號" prop="account">
+              <a-input v-model="form.account" />
             </a-form-model-item>
-            <a-form-model-item ref="password" label="密碼" prop="password">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="密碼" prop="password">
+              <a-input v-model="form.password" />
             </a-form-model-item>
-            <a-form-model-item ref="name" label="姓名" prop="name">
+            <a-form-model-item label="姓名" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
             <a-form-model-item label="權限" prop="permission">
               <a-radio-group v-model="form.permission">
-                <a-radio value="1">
-                  全體
-                </a-radio>
-                <a-radio value="2">
+                <a-radio :value="1">
                   總部
+                </a-radio>
+                <a-radio :value="0">
+                  全體
                 </a-radio>
               </a-radio-group>
             </a-form-model-item>
@@ -83,6 +86,11 @@ export default {
         dataIndex: 'name'
       },
       {
+        title: '權限',
+        dataIndex: 'permission',
+        scopedSlots: { customRender: 'permission' }
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
         width: '25%',
@@ -95,7 +103,8 @@ export default {
       data.push({
         account: `account ${i}`,
         password: `password ${i}`,
-        name: `Steven ${i}`
+        name: `Steven ${i}`,
+        permission: 1
       })
     }
     return {
@@ -111,7 +120,7 @@ export default {
         account: '',
         password: '',
         name: '',
-        permission: '1'
+        permission: 1
       },
       rules: {
         account: [
@@ -127,11 +136,15 @@ export default {
     }
   },
   methods: {
-    openDialog(mode) {
+    openDialog(mode, item) {
       this.dialog.visible = true
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          break
+        case 'edit':
+          this.dialog.title = '編輯'
+          Object.assign(this.form, item)
           break
       }
     },
@@ -146,8 +159,17 @@ export default {
         }
       })
     },
+    resetForm() {
+      return {
+        account: '',
+        password: '',
+        name: '',
+        permission: 1
+      }
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
     }
   }
 }
