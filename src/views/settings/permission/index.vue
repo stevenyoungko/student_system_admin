@@ -143,7 +143,7 @@ export default {
           this.dialog.title = '新建'
           break
         case 'edit':
-          this.dialog.title = '編輯'
+          this.dialog.title = '修改權限'
           Object.assign(this.form, item)
           break
         default:

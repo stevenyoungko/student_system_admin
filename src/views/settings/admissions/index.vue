@@ -7,7 +7,7 @@
       <a-table :columns="columns" :data-source="tableData" bordered>
         <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
           </div>
         </template>
@@ -126,7 +126,7 @@ export default {
           this.dialog.title = '新建'
           break
         case 'edit':
-          this.dialog.title = '編輯'
+          this.dialog.title = '修改'
           form.dateRange[0] = item.start_at
           form.dateRange[1] = item.end_at
           form.title = item.title
