@@ -140,7 +140,8 @@
         :data-source="tableData"
         bordered
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        :scroll="{ x: 1950, y: 350 }"
+        :scroll="{ x: 1950, y: 380 }"
+        size="small"
       >
         <template slot="crm" slot-scope="text">
           <a-icon v-if="text" type="check-circle" :style="{color: '#53C519'}" />

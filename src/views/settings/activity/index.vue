@@ -5,9 +5,9 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
-        <template slot="operation">
+        <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
           </div>
         </template>
@@ -56,6 +56,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import moment from 'moment'
 export default {
   name: 'Activity',
   components: {
@@ -90,12 +91,12 @@ export default {
         {
           name: '活動一',
           address: '101大樓',
-          endDate: '2021-6-31'
+          endDate: '2021-6-5'
         },
         {
           name: '活動二',
           address: '松菸',
-          endDate: '2021-10-31'
+          endDate: '2021-10-5'
         }
       ],
       dialog: {
@@ -107,7 +108,7 @@ export default {
       form: {
         name: '',
         address: '',
-        endDate: ''
+        endDate: undefined
       },
       rules: {
         name: [
@@ -123,11 +124,21 @@ export default {
     }
   },
   methods: {
-    openDialog(mode) {
+    openDialog(mode, item) {
       this.dialog.visible = true
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          break
+        case 'edit':
+          this.dialog.title = '修改'
+          Object.assign(this.form, {
+            name: item.name,
+            address: item.address,
+            endDate: moment(item.endDate)
+          })
+          break
+        default:
           break
       }
     },
@@ -142,8 +153,16 @@ export default {
         }
       })
     },
+    resetForm() {
+      return {
+        name: '',
+        address: '',
+        endDate: undefined
+      }
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
     }
   }
 }
