@@ -5,9 +5,9 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
-        <template slot="operation">
+        <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="編輯" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
           </div>
         </template>
@@ -31,10 +31,10 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item ref="title" label="招生名稱" prop="title">
+            <a-form-model-item label="招生名稱" prop="title">
               <a-input v-model="form.title" />
             </a-form-model-item>
-            <a-form-model-item ref="dateRange" label="起迄时间" prop="dateRange">
+            <a-form-model-item label="起迄时间" prop="dateRange">
               <a-range-picker
                 v-model="form.dateRange"
                 value-format="YYYY-MM-DD"
@@ -115,11 +115,24 @@ export default {
     }
   },
   methods: {
-    openDialog(mode) {
+    openDialog(mode, item) {
       this.dialog.visible = true
+      const form = {
+        title: '',
+        dateRange: []
+      }
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          break
+        case 'edit':
+          this.dialog.title = '編輯'
+          form.dateRange[0] = item.start_at
+          form.dateRange[1] = item.end_at
+          form.title = item.title
+          Object.assign(this.form, form)
+          break
+        default:
           break
       }
     },
@@ -134,8 +147,15 @@ export default {
         }
       })
     },
+    resetForm() {
+      return {
+        title: '',
+        dateRange: []
+      }
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
     }
   }
 }

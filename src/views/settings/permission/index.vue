@@ -146,6 +146,8 @@ export default {
           this.dialog.title = '編輯'
           Object.assign(this.form, item)
           break
+        default:
+          break
       }
     },
     submit() {
