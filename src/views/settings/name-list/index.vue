@@ -5,9 +5,9 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
-        <template slot="operation">
+        <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
           </div>
         </template>
@@ -84,7 +84,7 @@ export default {
       wrapperCol: { span: 14 },
       form: {
         listSource: '',
-        contactCount: ''
+        contactCount: undefined
       },
       dialog: {
         title: '',
@@ -101,11 +101,17 @@ export default {
     }
   },
   methods: {
-    openDialog(mode) {
+    openDialog(mode, item) {
       this.dialog.visible = true
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          break
+        case 'edit':
+          this.dialog.title = '編輯'
+          Object.assign(this.form, item)
+          break
+        default:
           break
       }
     },
@@ -120,8 +126,15 @@ export default {
         }
       })
     },
+    resetForm() {
+      return {
+        listSource: '',
+        contactCount: undefined
+      }
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
     }
   }
 }
