@@ -23,7 +23,9 @@ import {
   List,
   Card,
   Upload,
-  InputNumber
+  InputNumber,
+  Row,
+  Col
 } from 'ant-design-vue'
 
 Layout.install(Vue)
@@ -52,3 +54,5 @@ List.install(Vue)
 Card.install(Vue)
 Upload.install(Vue)
 InputNumber.install(Vue)
+Row.install(Vue)
+Col.install(Vue)
