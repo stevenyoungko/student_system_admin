@@ -156,7 +156,7 @@
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <DetailDialog
         :data="detailDialog.data"
         :show-modal.sync="detailDialog.show"

@@ -16,7 +16,7 @@
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
@@ -91,6 +91,10 @@ export default {
         scopedSlots: { customRender: 'permission' }
       },
       {
+        title: '建立者',
+        dataIndex: 'accountName'
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
         width: '25%',
@@ -104,6 +108,7 @@ export default {
         account: `account ${i}`,
         password: `password ${i}`,
         name: `Steven ${i}`,
+        accountName: `Steven ${i}`,
         permission: 1
       })
     }

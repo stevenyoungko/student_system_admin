@@ -5,17 +5,17 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
-        <template slot="operation">
+        <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
             <DefaultButton type="primary" text="簡訊發送" style="margin-right: 6px;" />
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
             <DefaultButton type="primary" text="詳細" style="margin-right: 6px;" />
             <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
           </div>
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
@@ -54,6 +54,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import moment from 'moment'
 export default {
   name: 'SentNews',
   components: {
@@ -66,6 +67,10 @@ export default {
       {
         title: '群組名稱',
         dataIndex: 'groupName'
+      },
+      {
+        title: '建立者',
+        dataIndex: 'accountName'
       },
       {
         title: '建立時間',
@@ -83,6 +88,7 @@ export default {
       tableData: [
         {
           groupName: '群組名稱',
+          accountName: 'Steven',
           created_at: '2021-03-08'
         }
       ],
@@ -107,11 +113,20 @@ export default {
     }
   },
   methods: {
-    openDialog(mode) {
+    openDialog(mode, item) {
       this.dialog.visible = true
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          break
+        case 'edit':
+          this.dialog.title = '修改'
+          Object.assign(this.form, {
+            groupName: item.groupName,
+            created_at: moment(item.created_at)
+          })
+          break
+        default:
           break
       }
     },
@@ -126,8 +141,15 @@ export default {
         }
       })
     },
+    resetForm() {
+      return {
+        groupName: '',
+        created_at: ''
+      }
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
     }
   }
 }

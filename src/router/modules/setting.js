@@ -13,7 +13,7 @@ export default [
         name: 'Permission',
         component: () => import('@/views/settings/permission'),
         meta: {
-          title: '權限設定',
+          title: '會員設定',
           icon: 'lock'
         }
       },
@@ -40,7 +40,7 @@ export default [
         name: 'Activity',
         component: () => import('@/views/settings/activity'),
         meta: {
-          title: '名單蒐集活動名稱',
+          title: '名單活動',
           icon: 'project'
         }
       },
@@ -58,7 +58,7 @@ export default [
         name: 'SentNews',
         component: () => import('@/views/settings/sent-news'),
         meta: {
-          title: '發送簡訊',
+          title: '群組',
           icon: 'message'
         }
       }

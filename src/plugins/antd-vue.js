@@ -25,7 +25,8 @@ import {
   Upload,
   InputNumber,
   Row,
-  Col
+  Col,
+  Tag
 } from 'ant-design-vue'
 
 Layout.install(Vue)
@@ -56,3 +57,4 @@ Upload.install(Vue)
 InputNumber.install(Vue)
 Row.install(Vue)
 Col.install(Vue)
+Tag.install(Vue)

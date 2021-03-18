@@ -5,6 +5,9 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
             <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
@@ -13,7 +16,7 @@
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
@@ -31,13 +34,16 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item ref="name" label="活動名稱" prop="name">
+            <a-form-model-item label="活動名稱" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
-            <a-form-model-item ref="address" label="活動地點" prop="address">
+            <a-form-model-item label="活動地點" prop="address">
               <a-input v-model="form.address" />
             </a-form-model-item>
-            <a-form-model-item ref="endDate" label="聯絡到期時間" prop="endDate">
+            <a-form-model-item label="狀態" prop="status">
+              <a-switch v-model="form.status" />
+            </a-form-model-item>
+            <a-form-model-item label="聯絡到期時間" prop="endDate">
               <a-date-picker
                 v-model="form.endDate"
                 placeholder="請選擇日期"
@@ -75,6 +81,15 @@ export default {
         dataIndex: 'address'
       },
       {
+        title: '建立者',
+        dataIndex: 'accountName'
+      },
+      {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '聯絡到期時間',
         dataIndex: 'endDate'
       },
@@ -91,11 +106,15 @@ export default {
         {
           name: '活動一',
           address: '101大樓',
+          accountName: 'Steven',
+          status: true,
           endDate: '2021-6-5'
         },
         {
           name: '活動二',
           address: '松菸',
+          accountName: 'Sean',
+          status: false,
           endDate: '2021-10-5'
         }
       ],
@@ -108,7 +127,8 @@ export default {
       form: {
         name: '',
         address: '',
-        endDate: undefined
+        endDate: undefined,
+        status: false
       },
       rules: {
         name: [

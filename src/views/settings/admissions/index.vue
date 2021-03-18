@@ -13,7 +13,7 @@
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
@@ -66,6 +66,10 @@ export default {
         dataIndex: 'title'
       },
       {
+        title: '建立者',
+        dataIndex: 'accountName'
+      },
+      {
         title: '起始時間',
         dataIndex: 'start_at'
       },
@@ -85,11 +89,13 @@ export default {
       tableData: [
         {
           title: '2019春季招生',
+          accountName: 'Steven',
           start_at: '2019-01-01',
           end_at: '2019-03-01'
         },
         {
           title: '2018秋季招生',
+          accountName: 'Sean',
           start_at: '2019-06-01',
           end_at: '2019-9-01'
         }

@@ -17,20 +17,13 @@
     <div v-if="this.$slots['content']" class="content">
       <slot name="content"></slot>
     </div>
-    <div v-if="this.$slots['default']" class="default">
-      <slot></slot>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'PageContainer',
-  mounted() {
-    if (this.$slots.default) {
-      console.warn('[PageContainer] default slot 為非預留插槽，請確保你的插槽使用正確')
-    }
-  }
+  name: 'PageContainer'
 }
 </script>
 

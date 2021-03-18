@@ -8,12 +8,11 @@
         <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
             <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
           </div>
         </template>
       </a-table>
     </template>
-    <template #default>
+    <template>
       <a-modal
         v-model="dialog.visible"
         :title="dialog.title"
@@ -66,6 +65,10 @@ export default {
         dataIndex: 'contactCount'
       },
       {
+        title: '建立者',
+        dataIndex: 'accountName'
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
         width: '20%',
@@ -77,7 +80,8 @@ export default {
       tableData: [
         {
           listSource: 'Fb',
-          contactCount: 5
+          contactCount: 5,
+          accountName: 'Steven'
         }
       ],
       labelCol: { span: 4 },
