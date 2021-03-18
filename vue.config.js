@@ -16,7 +16,7 @@ console.log('專案環境 : ', NODE_ENV)
 console.log('當前 apiProxyTarget 為: ', apiProxyTarget)
 
 module.exports = {
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/student_system_admin/' : '/',
   outputDir: 'dist',
   lintOnSave: NODE_ENV === 'development',
   productionSourceMap: false,
