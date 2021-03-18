@@ -19,7 +19,14 @@ import {
   Radio,
   Popconfirm,
   Alert,
-  Modal
+  Modal,
+  List,
+  Card,
+  Upload,
+  InputNumber,
+  Row,
+  Col,
+  Tag
 } from 'ant-design-vue'
 
 Layout.install(Vue)
@@ -44,3 +51,10 @@ Radio.install(Vue)
 Popconfirm.install(Vue)
 Alert.install(Vue)
 Modal.install(Vue)
+List.install(Vue)
+Card.install(Vue)
+Upload.install(Vue)
+InputNumber.install(Vue)
+Row.install(Vue)
+Col.install(Vue)
+Tag.install(Vue)

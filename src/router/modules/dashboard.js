@@ -4,7 +4,9 @@ export default [
     name: 'Dashboard',
     component: () => import('@/views/dashboard/index'),
     meta: {
-      title: '儀表板'
+      title: '儀表板',
+      icon: 'dashboard',
+      affix: true
     }
   }
 ]

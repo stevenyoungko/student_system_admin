@@ -6,7 +6,10 @@ import DefaultLayout from '@/layout/DefaultLayout.vue'
 
 // modules
 import dashboard from './modules/dashboard'
-import demo from './modules/demo'
+import setting from './modules/setting'
+import overview from './modules/overview'
+import upload from './modules/upload'
+import search from './modules/search'
 
 Vue.use(VueRouter)
 
@@ -30,7 +33,10 @@ export const constantRoutes = [
     component: DefaultLayout,
     children: [
       ...dashboard,
-      ...demo
+      ...setting,
+      ...overview,
+      ...upload,
+      ...search
     ]
   },
   { path: '*', redirect: '/404', hidden: true }
