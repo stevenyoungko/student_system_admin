@@ -10,8 +10,8 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="warning" text="回復原始設定" style="margin-right: 6px;" />
+            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+            <DefaultButton type="warning" text="停用" style="margin-right: 6px;" />
           </div>
         </template>
       </a-table>
@@ -98,6 +98,7 @@ export default {
     for (let i = 1; i < 11; i++) {
       data.push({
         account: `account ${i}`,
+        password: `Steven ${i}`,
         name: `Steven ${i}`,
         permission: 1
       })
