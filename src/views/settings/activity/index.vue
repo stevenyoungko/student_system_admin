@@ -43,9 +43,9 @@
             <a-form-model-item label="狀態" prop="status">
               <a-switch v-model="form.status" />
             </a-form-model-item>
-            <a-form-model-item label="聯絡到期時間" prop="endDate">
+            <a-form-model-item label="聯絡到期時間" prop="date">
               <a-date-picker
-                v-model="form.endDate"
+                v-model="form.date"
                 placeholder="請選擇日期"
                 style="width: 100%;"
                 type="date"
@@ -94,8 +94,8 @@ export default {
         scopedSlots: { customRender: 'status' }
       },
       {
-        title: '聯絡到期時間',
-        dataIndex: 'endDate'
+        title: '活動日期',
+        dataIndex: 'date'
       },
       {
         title: '操作',
@@ -113,7 +113,7 @@ export default {
           accountName: 'Steven',
           branch: '總部',
           status: true,
-          endDate: '2021-6-5'
+          date: '2021-6-5'
         },
         {
           name: '活動二',
@@ -121,7 +121,7 @@ export default {
           accountName: 'Sean',
           branch: '分部',
           status: false,
-          endDate: '2021-10-5'
+          date: '2021-10-5'
         }
       ],
       dialog: {
@@ -133,7 +133,7 @@ export default {
       form: {
         name: '',
         address: '',
-        endDate: undefined,
+        date: undefined,
         status: false
       },
       rules: {
@@ -143,7 +143,7 @@ export default {
         address: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        endDate: [
+        date: [
           { required: true, message: '必填', trigger: 'change' }
         ]
       }
@@ -161,7 +161,7 @@ export default {
           Object.assign(this.form, {
             name: item.name,
             address: item.address,
-            endDate: moment(item.endDate)
+            date: moment(item.date)
           })
           break
         default:
@@ -183,7 +183,7 @@ export default {
       return {
         name: '',
         address: '',
-        endDate: undefined
+        date: undefined
       }
     },
     handleCancel() {
