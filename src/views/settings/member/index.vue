@@ -65,7 +65,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 export default {
-  name: 'Permission',
+  name: 'Member',
   components: {
     PageContainer,
     DefaultButton,

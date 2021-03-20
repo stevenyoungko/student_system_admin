@@ -9,9 +9,9 @@ export default [
     },
     children: [
       {
-        path: 'permission',
-        name: 'Permission',
-        component: () => import('@/views/settings/permission'),
+        path: 'member',
+        name: 'Member',
+        component: () => import('@/views/settings/member'),
         meta: {
           title: '會員設定',
           icon: 'lock'
