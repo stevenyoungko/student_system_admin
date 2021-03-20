@@ -78,10 +78,6 @@ export default {
         dataIndex: 'account'
       },
       {
-        title: '密碼',
-        dataIndex: 'password'
-      },
-      {
         title: '姓名',
         dataIndex: 'name'
       },
@@ -89,10 +85,6 @@ export default {
         title: '權限',
         dataIndex: 'permission',
         scopedSlots: { customRender: 'permission' }
-      },
-      {
-        title: '建立者',
-        dataIndex: 'accountName'
       },
       {
         title: '操作',
@@ -106,9 +98,7 @@ export default {
     for (let i = 1; i < 11; i++) {
       data.push({
         account: `account ${i}`,
-        password: `password ${i}`,
         name: `Steven ${i}`,
-        accountName: `Steven ${i}`,
         permission: 1
       })
     }
