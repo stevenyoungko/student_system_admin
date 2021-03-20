@@ -131,7 +131,6 @@
     </template>
     <template #control>
       <DefaultButton type="primary" text="匯出excel" style="margin-right: 6px;" />
-      <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
       <DefaultButton type="primary" text="設定群組" style="margin-right: 6px;" @click="showSetting" />
     </template>
     <template #content>
