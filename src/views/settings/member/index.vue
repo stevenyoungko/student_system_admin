@@ -87,6 +87,10 @@ export default {
         scopedSlots: { customRender: 'permission' }
       },
       {
+        title: '教學中心',
+        dataIndex: 'branch'
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
         width: '25%',
@@ -100,7 +104,8 @@ export default {
         account: `account ${i}`,
         password: `Steven ${i}`,
         name: `Steven ${i}`,
-        permission: 1
+        permission: 1,
+        branch: '總部'
       })
     }
     return {
