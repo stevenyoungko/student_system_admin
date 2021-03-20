@@ -70,6 +70,10 @@ export default {
         dataIndex: 'accountName'
       },
       {
+        title: '教學中心',
+        dataIndex: 'branch'
+      },
+      {
         title: '起始時間',
         dataIndex: 'start_at'
       },
@@ -90,12 +94,14 @@ export default {
         {
           title: '2019春季招生',
           accountName: 'Steven',
+          branch: '總部',
           start_at: '2019-01-01',
           end_at: '2019-03-01'
         },
         {
           title: '2018秋季招生',
           accountName: 'Sean',
+          branch: '分部',
           start_at: '2019-06-01',
           end_at: '2019-9-01'
         }

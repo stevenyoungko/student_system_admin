@@ -65,6 +65,10 @@ export default {
         dataIndex: 'contactCount'
       },
       {
+        title: '教學中心',
+        dataIndex: 'branch'
+      },
+      {
         title: '建立者',
         dataIndex: 'accountName'
       },
@@ -81,6 +85,7 @@ export default {
         {
           listSource: 'Fb',
           contactCount: 5,
+          branch: '總部',
           accountName: 'Steven'
         }
       ],

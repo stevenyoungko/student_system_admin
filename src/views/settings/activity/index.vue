@@ -85,6 +85,10 @@ export default {
         dataIndex: 'accountName'
       },
       {
+        title: '教學中心',
+        dataIndex: 'branch'
+      },
+      {
         title: '狀態',
         dataIndex: 'status',
         scopedSlots: { customRender: 'status' }
@@ -107,6 +111,7 @@ export default {
           name: '活動一',
           address: '101大樓',
           accountName: 'Steven',
+          branch: '總部',
           status: true,
           endDate: '2021-6-5'
         },
@@ -114,6 +119,7 @@ export default {
           name: '活動二',
           address: '松菸',
           accountName: 'Sean',
+          branch: '分部',
           status: false,
           endDate: '2021-10-5'
         }
