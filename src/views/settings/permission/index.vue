@@ -43,7 +43,7 @@
             <a-form-model-item label="姓名" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
-            <a-form-model-item label="權限" prop="permission">
+            <a-form-model-item v-if="isAdd" label="權限" prop="permission">
               <a-radio-group v-model="form.permission">
                 <a-radio :value="1">
                   總部
@@ -108,7 +108,8 @@ export default {
       data,
       dialog: {
         title: '',
-        visible: false
+        visible: false,
+        mode: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
@@ -131,15 +132,21 @@ export default {
       }
     }
   },
+  computed: {
+    isAdd() {
+      return this.dialog.mode === 'add'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
           break
         case 'edit':
-          this.dialog.title = '修改權限'
+          this.dialog.title = '修改'
           Object.assign(this.form, item)
           break
         default:
