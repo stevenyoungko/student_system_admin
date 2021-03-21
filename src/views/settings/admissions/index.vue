@@ -35,6 +35,9 @@
             <a-form-model-item label="招生名稱" prop="title">
               <a-input v-model="form.title" />
             </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
+            </a-form-model-item>
             <a-form-model-item label="起迄时间" prop="dateRange">
               <a-range-picker
                 v-model="form.dateRange"
@@ -116,6 +119,7 @@ export default {
       ],
       dialog: {
         title: '',
+        mode: '',
         visible: false
       },
       labelCol: { span: 4 },
@@ -134,9 +138,15 @@ export default {
       }
     }
   },
+  computed: {
+    isEdit() {
+      return this.dialog.mode === 'edit'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       const form = {
         title: '',
         dateRange: []
@@ -147,9 +157,10 @@ export default {
           break
         case 'edit':
           this.dialog.title = '修改'
+          form.title = item.title
+          form.status = item.status
           form.dateRange[0] = item.start_at
           form.dateRange[1] = item.end_at
-          form.title = item.title
           Object.assign(this.form, form)
           break
         default:

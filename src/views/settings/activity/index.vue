@@ -38,7 +38,7 @@
             <a-form-model-item label="活動地點" prop="address">
               <a-input v-model="form.address" />
             </a-form-model-item>
-            <a-form-model-item label="狀態" prop="status">
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
             </a-form-model-item>
             <a-form-model-item label="聯絡到期時間" prop="date">
@@ -124,7 +124,8 @@ export default {
       ],
       dialog: {
         title: '',
-        visible: false
+        visible: false,
+        mode: ''
       },
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -147,9 +148,15 @@ export default {
       }
     }
   },
+  computed: {
+    isEdit() {
+      return this.dialog.mode === 'edit'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
@@ -159,6 +166,7 @@ export default {
           Object.assign(this.form, {
             name: item.name,
             address: item.address,
+            status: item.status,
             date: moment(item.date)
           })
           break

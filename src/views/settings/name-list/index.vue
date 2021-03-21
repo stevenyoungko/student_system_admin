@@ -37,6 +37,9 @@
             <a-form-model-item label="聯絡天數" prop="contactCount">
               <a-input-number v-model="form.contactCount" :min="1" />
             </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
+            </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
       </a-modal>
@@ -109,6 +112,7 @@ export default {
       },
       dialog: {
         title: '',
+        mode: '',
         visible: false
       },
       rules: {
@@ -121,9 +125,15 @@ export default {
       }
     }
   },
+  computed: {
+    isEdit() {
+      return this.dialog.mode === 'edit'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'

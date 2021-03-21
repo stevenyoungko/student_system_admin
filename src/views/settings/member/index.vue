@@ -44,6 +44,9 @@
             <a-form-model-item label="姓名" prop="name">
               <a-input v-model="form.name" />
             </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
+            </a-form-model-item>
             <a-form-model-item v-if="isAdd" label="權限" prop="permission">
               <a-radio-group v-model="form.permission">
                 <a-radio :value="1">
@@ -147,6 +150,9 @@ export default {
   computed: {
     isAdd() {
       return this.dialog.mode === 'add'
+    },
+    isEdit() {
+      return this.dialog.mode === 'edit'
     }
   },
   methods: {
