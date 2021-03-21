@@ -5,13 +5,14 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="簡訊發送" style="margin-right: 6px;" />
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="primary" text="詳細" style="margin-right: 6px;" />
-            <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
-          </div>
+          <DefaultButton type="primary" text="簡訊發送" style="margin-right: 6px;" />
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+          <DefaultButton type="primary" text="詳細" style="margin-right: 6px;" />
+          <DefaultButton type="danger" text="刪除" />
         </template>
       </a-table>
     </template>
@@ -73,6 +74,11 @@ export default {
         dataIndex: 'accountName'
       },
       {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '建立時間',
         dataIndex: 'created_at'
       },
@@ -89,6 +95,7 @@ export default {
         {
           groupName: '群組名稱',
           accountName: 'Steven',
+          status: true,
           created_at: '2021-03-08'
         }
       ],

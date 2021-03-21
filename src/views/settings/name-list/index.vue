@@ -5,10 +5,11 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-          </div>
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
         </template>
       </a-table>
     </template>
@@ -73,6 +74,11 @@ export default {
         dataIndex: 'type'
       },
       {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '建立者',
         dataIndex: 'accountName'
       },
@@ -91,6 +97,7 @@ export default {
           contactCount: 5,
           branch: '總部',
           type: '自訂',
+          status: true,
           accountName: 'Steven'
         }
       ],

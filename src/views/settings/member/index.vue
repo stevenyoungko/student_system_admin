@@ -8,11 +8,12 @@
         <template slot="permission" slot-scope="text">
           <span v-text="text ? '總部' : '全體'"></span>
         </template>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="warning" text="停用" style="margin-right: 6px;" />
-          </div>
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+          <DefaultButton type="warning" text="停用" style="margin-right: 6px;" />
         </template>
       </a-table>
     </template>
@@ -91,6 +92,11 @@ export default {
         dataIndex: 'branch'
       },
       {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
         width: '25%',
@@ -105,7 +111,8 @@ export default {
         password: `Steven ${i}`,
         name: `Steven ${i}`,
         permission: 1,
-        branch: '總部'
+        branch: '總部',
+        status: true
       })
     }
     return {

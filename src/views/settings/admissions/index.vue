@@ -5,11 +5,12 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
-          </div>
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+          <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
         </template>
       </a-table>
     </template>
@@ -74,6 +75,11 @@ export default {
         dataIndex: 'branch'
       },
       {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '起始時間',
         dataIndex: 'start_at'
       },
@@ -95,6 +101,7 @@ export default {
           title: '2019春季招生',
           accountName: 'Steven',
           branch: '總部',
+          status: true,
           start_at: '2019-01-01',
           end_at: '2019-03-01'
         },
@@ -102,6 +109,7 @@ export default {
           title: '2018秋季招生',
           accountName: 'Sean',
           branch: '分部',
+          status: false,
           start_at: '2019-06-01',
           end_at: '2019-9-01'
         }
