@@ -44,7 +44,7 @@ export const constantRoutes = [
 
 const router = new VueRouter({
   routes: constantRoutes,
-  mode: 'history',
+  mode: 'hash',
   base: '/',
   scrollBehavior() {
     return { x: 0, y: 0 }
