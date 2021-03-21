@@ -1,18 +1,12 @@
 <template>
   <PageContainer>
-    <template #control>
-      <a-button type="primary" @click="openDialog('add')">新建</a-button>
-    </template>
     <template #content>
-      <a-table :columns="columns" :data-source="data" bordered>
-        <template slot="permission" slot-scope="text">
-          <span v-text="text ? '總部' : '全體'"></span>
+      <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改權限" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="warning" text="回復原始設定" style="margin-right: 6px;" />
-          </div>
+          <DefaultButton type="primary" text="修改" @click="openDialog(record)" />
         </template>
       </a-table>
     </template>
@@ -23,6 +17,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :width="600"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -34,24 +29,19 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="帳號" prop="account">
-              <a-input v-model="form.account" />
+            <a-form-model-item label="權限" prop="authority_category">
+              <a-checkbox-group v-model="form.authority_category">
+                <a-checkbox
+                  v-for="(category, index) in categroyList"
+                  :key="index"
+                  :value="category.value"
+                >
+                  {{ category.name }}
+                </a-checkbox>
+              </a-checkbox-group>
             </a-form-model-item>
-            <a-form-model-item label="密碼" prop="password">
-              <a-input v-model="form.password" />
-            </a-form-model-item>
-            <a-form-model-item label="姓名" prop="name">
-              <a-input v-model="form.name" />
-            </a-form-model-item>
-            <a-form-model-item label="權限" prop="permission">
-              <a-radio-group v-model="form.permission">
-                <a-radio :value="1">
-                  總部
-                </a-radio>
-                <a-radio :value="0">
-                  全體
-                </a-radio>
-              </a-radio-group>
+            <a-form-model-item label="狀態">
+              <a-switch v-model="form.status" />
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -64,6 +54,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import mock from '../permission/mock'
 export default {
   name: 'Permission',
   components: {
@@ -74,86 +65,76 @@ export default {
   data() {
     const columns = [
       {
-        title: '帳號',
-        dataIndex: 'account'
+        title: 'id',
+        dataIndex: 'id'
       },
       {
-        title: '密碼',
-        dataIndex: 'password'
+        title: '教學中心代號',
+        dataIndex: 'branch_id'
       },
       {
-        title: '姓名',
-        dataIndex: 'name'
+        title: '教學中心名稱',
+        dataIndex: 'branch_name'
+      },
+      {
+        title: '權限級別',
+        dataIndex: 'authority'
       },
       {
         title: '權限',
-        dataIndex: 'permission',
-        scopedSlots: { customRender: 'permission' }
+        dataIndex: 'authority_category'
       },
       {
-        title: '建立者',
-        dataIndex: 'accountName'
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
+        title: '更新時間',
+        dataIndex: 'update_time'
       },
       {
         title: '操作',
         dataIndex: 'operation',
-        width: '25%',
         scopedSlots: { customRender: 'operation' }
       }
     ]
 
-    const data = []
-    for (let i = 1; i < 11; i++) {
-      data.push({
-        account: `account ${i}`,
-        password: `password ${i}`,
-        name: `Steven ${i}`,
-        accountName: `Steven ${i}`,
-        permission: 1
-      })
-    }
     return {
       columns,
-      data,
+      tableData: mock,
       dialog: {
         title: '',
         visible: false
       },
       labelCol: { span: 4 },
-      wrapperCol: { span: 14 },
+      wrapperCol: { span: 20 },
       form: {
-        account: '',
-        password: '',
-        name: '',
-        permission: 1
+        authority_category: [],
+        status: ''
       },
       rules: {
-        account: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ],
-        name: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ]
-      }
+      },
+      categroyList: [
+        { name: '招生區間', value: 1 },
+        { name: '名單來源', value: 2 },
+        { name: '名單活動', value: 3 },
+        { name: '退班原因', value: 4 }
+      ]
     }
   },
   methods: {
-    openDialog(mode, item) {
+    handleCancel() {
+      this.$refs.ruleForm.resetFields()
+      Object.assign(this.form, this.resetForm())
+    },
+    openDialog(item) {
       this.dialog.visible = true
-      switch (mode) {
-        case 'add':
-          this.dialog.title = '新建'
-          break
-        case 'edit':
-          this.dialog.title = '修改權限'
-          Object.assign(this.form, item)
-          break
-        default:
-          break
-      }
+      this.dialog.title = '修改'
+      Object.assign(this.form, {
+        authority_category: item.authority_category,
+        status: item.status
+      })
     },
     submit() {
       this.$refs.ruleForm.validate(valid => {
@@ -165,23 +146,11 @@ export default {
           return false
         }
       })
-    },
-    resetForm() {
-      return {
-        account: '',
-        password: '',
-        name: '',
-        permission: 1
-      }
-    },
-    handleCancel() {
-      this.$refs.ruleForm.resetFields()
-      Object.assign(this.form, this.resetForm())
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 
 </style>

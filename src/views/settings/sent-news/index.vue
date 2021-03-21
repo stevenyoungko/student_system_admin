@@ -5,13 +5,14 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="簡訊發送" style="margin-right: 6px;" />
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-            <DefaultButton type="primary" text="詳細" style="margin-right: 6px;" />
-            <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
-          </div>
+          <DefaultButton type="primary" text="簡訊發送" style="margin-right: 6px;" />
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
+          <DefaultButton type="primary" text="詳細" style="margin-right: 6px;" />
+          <DefaultButton type="danger" text="刪除" />
         </template>
       </a-table>
     </template>
@@ -35,6 +36,9 @@
           >
             <a-form-model-item label="群組名稱" prop="groupName">
               <a-input v-model="form.groupName" placeholder="請輸入群組名稱" />
+            </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
             </a-form-model-item>
             <a-form-model-item label="建立時間" prop="created_at">
               <a-date-picker
@@ -73,6 +77,11 @@ export default {
         dataIndex: 'accountName'
       },
       {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '建立時間',
         dataIndex: 'created_at'
       },
@@ -89,6 +98,7 @@ export default {
         {
           groupName: '群組名稱',
           accountName: 'Steven',
+          status: true,
           created_at: '2021-03-08'
         }
       ],
@@ -100,6 +110,7 @@ export default {
       },
       dialog: {
         title: '',
+        mode: '',
         visible: false
       },
       rules: {
@@ -112,9 +123,15 @@ export default {
       }
     }
   },
+  computed: {
+    isEdit() {
+      return this.dialog.mode === 'edit'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
@@ -123,6 +140,7 @@ export default {
           this.dialog.title = '修改'
           Object.assign(this.form, {
             groupName: item.groupName,
+            status: item.status,
             created_at: moment(item.created_at)
           })
           break

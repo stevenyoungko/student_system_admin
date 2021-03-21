@@ -5,10 +5,11 @@
     </template>
     <template #content>
       <a-table :columns="columns" :data-source="tableData" bordered>
+        <template slot="status" slot-scope="text">
+          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+        </template>
         <template slot="operation" slot-scope="text, record">
-          <div class="editable-row-operations">
-            <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-          </div>
+          <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
         </template>
       </a-table>
     </template>
@@ -35,6 +36,9 @@
             </a-form-model-item>
             <a-form-model-item label="聯絡天數" prop="contactCount">
               <a-input-number v-model="form.contactCount" :min="1" />
+            </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -65,6 +69,19 @@ export default {
         dataIndex: 'contactCount'
       },
       {
+        title: '教學中心',
+        dataIndex: 'branch'
+      },
+      {
+        title: '類型',
+        dataIndex: 'type'
+      },
+      {
+        title: '狀態',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' }
+      },
+      {
         title: '建立者',
         dataIndex: 'accountName'
       },
@@ -81,6 +98,9 @@ export default {
         {
           listSource: 'Fb',
           contactCount: 5,
+          branch: '總部',
+          type: '自訂',
+          status: true,
           accountName: 'Steven'
         }
       ],
@@ -92,6 +112,7 @@ export default {
       },
       dialog: {
         title: '',
+        mode: '',
         visible: false
       },
       rules: {
@@ -104,9 +125,15 @@ export default {
       }
     }
   },
+  computed: {
+    isEdit() {
+      return this.dialog.mode === 'edit'
+    }
+  },
   methods: {
     openDialog(mode, item) {
       this.dialog.visible = true
+      this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'

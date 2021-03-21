@@ -4,13 +4,16 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table :columns="columns" :data-source="data" bordered>
+        <template slot="permission" slot-scope="text">
+          <span v-text="text ? '總部' : '全體'"></span>
+        </template>
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-          <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
+          <DefaultButton type="warning" text="停用" style="margin-right: 6px;" />
         </template>
       </a-table>
     </template>
@@ -32,22 +35,27 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="活動名稱" prop="name">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="帳號" prop="account">
+              <a-input v-model="form.account" />
             </a-form-model-item>
-            <a-form-model-item label="活動地點" prop="address">
-              <a-input v-model="form.address" />
+            <a-form-model-item label="密碼" prop="password">
+              <a-input v-model="form.password" />
+            </a-form-model-item>
+            <a-form-model-item label="姓名" prop="name">
+              <a-input v-model="form.name" />
             </a-form-model-item>
             <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
             </a-form-model-item>
-            <a-form-model-item label="聯絡到期時間" prop="date">
-              <a-date-picker
-                v-model="form.date"
-                placeholder="請選擇日期"
-                style="width: 100%;"
-                type="date"
-              />
+            <a-form-model-item v-if="isAdd" label="權限" prop="permission">
+              <a-radio-group v-model="form.permission">
+                <a-radio :value="1">
+                  總部
+                </a-radio>
+                <a-radio :value="0">
+                  全體
+                </a-radio>
+              </a-radio-group>
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -60,9 +68,8 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import moment from 'moment'
 export default {
-  name: 'Activity',
+  name: 'Member',
   components: {
     PageContainer,
     DefaultButton,
@@ -71,16 +78,17 @@ export default {
   data() {
     const columns = [
       {
-        title: '活動名稱',
+        title: '帳號',
+        dataIndex: 'account'
+      },
+      {
+        title: '姓名',
         dataIndex: 'name'
       },
       {
-        title: '活動地點',
-        dataIndex: 'address'
-      },
-      {
-        title: '建立者',
-        dataIndex: 'accountName'
+        title: '權限',
+        dataIndex: 'permission',
+        scopedSlots: { customRender: 'permission' }
       },
       {
         title: '教學中心',
@@ -92,63 +100,57 @@ export default {
         scopedSlots: { customRender: 'status' }
       },
       {
-        title: '活動日期',
-        dataIndex: 'date'
-      },
-      {
         title: '操作',
         dataIndex: 'operation',
-        width: '20%',
+        width: '25%',
         scopedSlots: { customRender: 'operation' }
       }
     ]
+
+    const data = []
+    for (let i = 1; i < 11; i++) {
+      data.push({
+        account: `account ${i}`,
+        password: `Steven ${i}`,
+        name: `Steven ${i}`,
+        permission: 1,
+        branch: '總部',
+        status: true
+      })
+    }
     return {
       columns,
-      tableData: [
-        {
-          name: '活動一',
-          address: '101大樓',
-          accountName: 'Steven',
-          branch: '總部',
-          status: true,
-          date: '2021-6-5'
-        },
-        {
-          name: '活動二',
-          address: '松菸',
-          accountName: 'Sean',
-          branch: '分部',
-          status: false,
-          date: '2021-10-5'
-        }
-      ],
+      data,
       dialog: {
         title: '',
         visible: false,
         mode: ''
       },
-      labelCol: { span: 6 },
+      labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
+        account: '',
+        password: '',
         name: '',
-        address: '',
-        date: undefined,
-        status: false
+        permission: 1
       },
       rules: {
+        account: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
         name: [
           { required: true, message: '必填', trigger: 'blur' }
-        ],
-        address: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ],
-        date: [
-          { required: true, message: '必填', trigger: 'change' }
         ]
       }
     }
   },
   computed: {
+    isAdd() {
+      return this.dialog.mode === 'add'
+    },
     isEdit() {
       return this.dialog.mode === 'edit'
     }
@@ -163,12 +165,7 @@ export default {
           break
         case 'edit':
           this.dialog.title = '修改'
-          Object.assign(this.form, {
-            name: item.name,
-            address: item.address,
-            status: item.status,
-            date: moment(item.date)
-          })
+          Object.assign(this.form, item)
           break
         default:
           break
@@ -187,9 +184,10 @@ export default {
     },
     resetForm() {
       return {
+        account: '',
+        password: '',
         name: '',
-        address: '',
-        date: undefined
+        permission: 1
       }
     },
     handleCancel() {
@@ -200,6 +198,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 
 </style>
