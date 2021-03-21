@@ -14,6 +14,15 @@ export default [
         component: () => import('@/views/settings/member'),
         meta: {
           title: '會員設定',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'permission',
+        name: 'Permission',
+        component: () => import('@/views/settings/permission'),
+        meta: {
+          title: '權限設定',
           icon: 'lock'
         }
       },
