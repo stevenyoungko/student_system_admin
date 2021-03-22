@@ -1,7 +1,13 @@
 <template>
   <PageContainer>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="loading"
+        row-key="id"
+      >
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -54,7 +60,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import mock from '../permission/mock'
+import { getBranchList } from '@/api/branch'
 export default {
   name: 'Permission',
   components: {
@@ -102,7 +108,7 @@ export default {
 
     return {
       columns,
-      tableData: mock,
+      tableData: [],
       dialog: {
         title: '',
         visible: false
@@ -120,10 +126,24 @@ export default {
         { name: '名單來源', value: 2 },
         { name: '名單活動', value: 3 },
         { name: '退班原因', value: 4 }
-      ]
+      ],
+      loading: false
     }
   },
+  created() {
+    this.getBranchList()
+  },
   methods: {
+    async getBranchList() {
+      this.loading = true
+      try {
+        const { data } = await getBranchList()
+        this.tableData = data
+      } catch {
+        // do nothing
+      }
+      this.loading = false
+    },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
       Object.assign(this.form, this.resetForm())
