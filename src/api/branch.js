@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getBranchList() {
+export const getBranchList = () => {
   return request({
-    url: '/api/api/branch/list',
+    url: '/api/branch/list',
     method: 'GET'
   })
 }

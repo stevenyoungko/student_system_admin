@@ -9,7 +9,7 @@ import { message } from 'ant-design-vue'
 // create an axios instance
 let axiosQueue = 0
 const service = axios.create({
-  baseURL: '', // url = base url + request url
+  baseURL: '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 60 * 1000 // request timeout
 })
@@ -19,7 +19,8 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     if (store.getters.token) {
-      config.headers['Authorization'] = store.getters.token
+      console.log(store.getters.token)
+      config.headers['token'] = store.getters.token
     }
 
     if (config.isLoading) {
