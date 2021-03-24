@@ -4,7 +4,16 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="loading"
+        row-key="id"
+      >
+        <template slot="type" slot-scope="text">
+          <span v-text="text === 'default' ? '預設' : '自訂'"></span>
+        </template>
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -56,6 +65,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import { getRecruitList } from '@/api/recruit'
 export default {
   name: 'Admissions',
   components: {
@@ -67,15 +77,20 @@ export default {
     const columns = [
       {
         title: '招生名稱',
-        dataIndex: 'title'
+        dataIndex: 'recruit_name'
+      },
+      {
+        title: '類型',
+        dataIndex: 'type',
+        scopedSlots: { customRender: 'type' }
       },
       {
         title: '建立者',
-        dataIndex: 'accountName'
+        dataIndex: 'account_name'
       },
       {
-        title: '教學中心',
-        dataIndex: 'branch'
+        title: '教學中心名稱',
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -84,11 +99,11 @@ export default {
       },
       {
         title: '起始時間',
-        dataIndex: 'start_at'
+        dataIndex: 'start_date'
       },
       {
         title: '結束時間',
-        dataIndex: 'end_at'
+        dataIndex: 'end_date'
       },
       {
         title: '操作',
@@ -143,7 +158,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getRecruitList()
+  },
   methods: {
+    async getRecruitList() {
+      this.loading = true
+      try {
+        const { data } = await getRecruitList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.loading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
