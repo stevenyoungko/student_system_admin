@@ -4,10 +4,12 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="data" bordered>
-        <template slot="permission" slot-scope="text">
-          <span v-text="text ? '總部' : '全體'"></span>
-        </template>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="loading"
+      >
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -68,6 +70,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import { getMemberList } from '@/api/member'
 export default {
   name: 'Member',
   components: {
@@ -83,16 +86,11 @@ export default {
       },
       {
         title: '姓名',
-        dataIndex: 'name'
-      },
-      {
-        title: '權限',
-        dataIndex: 'permission',
-        scopedSlots: { customRender: 'permission' }
+        dataIndex: 'account_name'
       },
       {
         title: '教學中心',
-        dataIndex: 'branch'
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -106,21 +104,10 @@ export default {
         scopedSlots: { customRender: 'operation' }
       }
     ]
-
-    const data = []
-    for (let i = 1; i < 11; i++) {
-      data.push({
-        account: `account ${i}`,
-        password: `Steven ${i}`,
-        name: `Steven ${i}`,
-        permission: 1,
-        branch: '總部',
-        status: true
-      })
-    }
     return {
       columns,
-      data,
+      tableData: [],
+      loading: false,
       dialog: {
         title: '',
         visible: false,
@@ -155,7 +142,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getMemberList()
+  },
   methods: {
+    async getMemberList() {
+      this.loading = true
+      try {
+        const { data } = await getMemberList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.loading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
