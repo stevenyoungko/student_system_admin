@@ -8,6 +8,9 @@
         :loading="loading"
         row-key="id"
       >
+        <template slot="level" slot-scope="text">
+          <span v-text="text ? '總部' : '教學中心' "></span>
+        </template>
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -83,12 +86,9 @@ export default {
         dataIndex: 'branch_name'
       },
       {
-        title: '權限級別',
-        dataIndex: 'authority'
-      },
-      {
-        title: '權限',
-        dataIndex: 'authority_category'
+        title: '層級',
+        dataIndex: 'level',
+        scopedSlots: { customRender: 'level' }
       },
       {
         title: '狀態',
@@ -98,6 +98,10 @@ export default {
       {
         title: '更新時間',
         dataIndex: 'update_time'
+      },
+      {
+        title: '建立時間',
+        dataIndex: 'create_time'
       },
       {
         title: '操作',
