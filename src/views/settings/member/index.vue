@@ -8,9 +8,10 @@
         :columns="columns"
         :data-source="tableData"
         bordered
-        :loading="loading"
+        :loading="tableLoading"
         size="small"
         :pagination="{pageSize:11}"
+        row-key="id"
       >
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
@@ -28,6 +29,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -45,21 +47,11 @@
             <a-form-model-item label="密碼" prop="password">
               <a-input v-model="form.password" />
             </a-form-model-item>
-            <a-form-model-item label="姓名" prop="name">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="姓名" prop="account_name">
+              <a-input v-model="form.account_name" />
             </a-form-model-item>
             <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
-            </a-form-model-item>
-            <a-form-model-item v-if="isAdd" label="權限" prop="permission">
-              <a-radio-group v-model="form.permission">
-                <a-radio :value="1">
-                  總部
-                </a-radio>
-                <a-radio :value="0">
-                  全體
-                </a-radio>
-              </a-radio-group>
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -72,7 +64,8 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import { getMemberList } from '@/api/member'
+import { getMemberList, postActivity } from '@/api/member'
+
 export default {
   name: 'Member',
   components: {
@@ -109,7 +102,8 @@ export default {
     return {
       columns,
       tableData: [],
-      loading: false,
+      tableLoading: false,
+      modalLoading: false,
       dialog: {
         title: '',
         visible: false,
@@ -120,8 +114,7 @@ export default {
       form: {
         account: '',
         password: '',
-        name: '',
-        permission: 1
+        account_name: ''
       },
       rules: {
         account: [
@@ -130,16 +123,13 @@ export default {
         password: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        name: [
+        account_name: [
           { required: true, message: '必填', trigger: 'blur' }
         ]
       }
     }
   },
   computed: {
-    isAdd() {
-      return this.dialog.mode === 'add'
-    },
     isEdit() {
       return this.dialog.mode === 'edit'
     }
@@ -149,14 +139,14 @@ export default {
   },
   methods: {
     async getMemberList() {
-      this.loading = true
+      this.tableLoading = true
       try {
         const { data } = await getMemberList()
         this.tableData = data
       } catch (error) {
         // do nothing
       }
-      this.loading = false
+      this.tableLoading = false
     },
     openDialog(mode, item) {
       this.dialog.visible = true
@@ -173,23 +163,27 @@ export default {
           break
       }
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+    async submit() {
+      this.modalLoading = true
+      if (this.dialog.mode === 'add') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await postActivity(this.form)
+          this.$message.success('新增成功')
+        } catch (error) {
+          console.log(error)
+        // do nothing
         }
-      })
+      }
+      this.modalLoading = false
+      this.dialog.visible = false
+      this.getMemberList()
     },
     resetForm() {
       return {
         account: '',
         password: '',
-        name: '',
-        permission: 1
+        account_name: ''
       }
     },
     handleCancel() {

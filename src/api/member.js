@@ -5,3 +5,8 @@ export const getMemberList = () => request({
   method: 'GET'
 })
 
+export const postActivity = (data) => request({
+  url: '/api/member/new',
+  method: 'POST',
+  data
+})
