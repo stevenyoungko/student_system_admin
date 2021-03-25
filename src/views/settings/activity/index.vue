@@ -67,6 +67,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 import moment from 'moment'
+import { getActivityList } from '@/api/activity'
 export default {
   name: 'Activity',
   components: {
@@ -78,19 +79,19 @@ export default {
     const columns = [
       {
         title: '活動名稱',
-        dataIndex: 'name'
+        dataIndex: 'activity_name'
       },
       {
         title: '活動地點',
-        dataIndex: 'address'
+        dataIndex: 'activity_location'
       },
       {
         title: '建立者',
-        dataIndex: 'accountName'
+        dataIndex: 'account_name'
       },
       {
         title: '教學中心',
-        dataIndex: 'branch'
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -99,7 +100,7 @@ export default {
       },
       {
         title: '活動日期',
-        dataIndex: 'date'
+        dataIndex: 'activity_date'
       },
       {
         title: '操作',
@@ -110,24 +111,7 @@ export default {
     ]
     return {
       columns,
-      tableData: [
-        {
-          name: '活動一',
-          address: '101大樓',
-          accountName: 'Steven',
-          branch: '總部',
-          status: true,
-          date: '2021-6-5'
-        },
-        {
-          name: '活動二',
-          address: '松菸',
-          accountName: 'Sean',
-          branch: '分部',
-          status: false,
-          date: '2021-10-5'
-        }
-      ],
+      tableData: [],
       dialog: {
         title: '',
         visible: false,
@@ -159,7 +143,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getActivityList()
+  },
   methods: {
+    async getActivityList() {
+      this.loading = true
+      try {
+        const { data } = await getActivityList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.loading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
