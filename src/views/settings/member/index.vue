@@ -9,6 +9,8 @@
         :data-source="tableData"
         bordered
         :loading="loading"
+        size="small"
+        :pagination="{pageSize:11}"
       >
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>

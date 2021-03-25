@@ -4,7 +4,16 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="loading"
+        size="small"
+      >
+        <template slot="type" slot-scope="text">
+          <span v-text="text === 'default' ? '預設' : '自訂'"></span>
+        </template>
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -51,6 +60,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import { getResourceList } from '@/api/resource'
 export default {
   name: 'NameList',
   components: {
@@ -62,19 +72,20 @@ export default {
     const columns = [
       {
         title: '名單來源',
-        dataIndex: 'listSource'
+        dataIndex: 'list_resource_name'
       },
       {
         title: '聯絡天數',
-        dataIndex: 'contactCount'
+        dataIndex: 'due_days'
       },
       {
         title: '教學中心',
-        dataIndex: 'branch'
+        dataIndex: 'branch_name'
       },
       {
         title: '類型',
-        dataIndex: 'type'
+        dataIndex: 'type',
+        scopedSlots: { customRender: 'type' }
       },
       {
         title: '狀態',
@@ -83,7 +94,7 @@ export default {
       },
       {
         title: '建立者',
-        dataIndex: 'accountName'
+        dataIndex: 'account_name'
       },
       {
         title: '操作',
@@ -94,16 +105,8 @@ export default {
     ]
     return {
       columns,
-      tableData: [
-        {
-          listSource: 'Fb',
-          contactCount: 5,
-          branch: '總部',
-          type: '自訂',
-          status: true,
-          accountName: 'Steven'
-        }
-      ],
+      tableData: [],
+      loading: false,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
@@ -130,7 +133,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getResourceList()
+  },
   methods: {
+    async getResourceList() {
+      this.loading = true
+      try {
+        const { data } = await getResourceList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.loading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode

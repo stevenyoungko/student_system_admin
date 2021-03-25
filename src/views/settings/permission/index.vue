@@ -7,6 +7,8 @@
         bordered
         :loading="loading"
         row-key="id"
+        size="small"
+        :pagination="{pageSize:11}"
       >
         <template slot="level" slot-scope="text">
           <span v-text="text ? '總部' : '教學中心' "></span>

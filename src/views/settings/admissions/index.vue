@@ -10,6 +10,8 @@
         bordered
         :loading="loading"
         row-key="id"
+        size="small"
+        :pagination="{pageSize:11}"
       >
         <template slot="type" slot-scope="text">
           <span v-text="text === 'default' ? '預設' : '自訂'"></span>
@@ -114,24 +116,7 @@ export default {
     ]
     return {
       columns,
-      tableData: [
-        {
-          title: '2019春季招生',
-          accountName: 'Steven',
-          branch: '總部',
-          status: true,
-          start_at: '2019-01-01',
-          end_at: '2019-03-01'
-        },
-        {
-          title: '2018秋季招生',
-          accountName: 'Sean',
-          branch: '分部',
-          status: false,
-          start_at: '2019-06-01',
-          end_at: '2019-9-01'
-        }
-      ],
+      tableData: [],
       dialog: {
         title: '',
         mode: '',
