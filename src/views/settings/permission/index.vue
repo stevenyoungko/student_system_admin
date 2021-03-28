@@ -37,22 +37,23 @@
           <a-form-model
             ref="ruleForm"
             :model="form"
-            :rules="rules"
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="權限" prop="authority_category">
-              <template v-for="authority in authorityList">
-                <a-checkbox-group :key="authority.name" v-model="form.authority_category">
+            <a-form-model-item label="權限">
+              <a-checkbox-group v-model="form.authorities">
+                <div v-for="authority in authorityList" :key="authority.id">
+                  <h3>{{ authority.name }}</h3>
                   <a-checkbox
                     v-for="(child, index) in authority.children"
                     :key="index"
                     :value="child.id"
+                    style="margin-bottom: 12px;"
                   >
                     {{ child.name }}
                   </a-checkbox>
-                </a-checkbox-group>
-              </template>
+                </div>
+              </a-checkbox-group>
             </a-form-model-item>
             <a-form-model-item label="狀態">
               <a-switch v-model="form.status" />
@@ -69,7 +70,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 import { getBranchList } from '@/api/branch'
-import { getAuthorityList } from '@/api/authority'
+import { getAuthorityList, getAuthorityItem, putActivityItem } from '@/api/authority'
 export default {
   name: 'Permission',
   components: {
@@ -102,14 +103,6 @@ export default {
         scopedSlots: { customRender: 'status' }
       },
       {
-        title: '更新時間',
-        dataIndex: 'update_time'
-      },
-      {
-        title: '建立時間',
-        dataIndex: 'create_time'
-      },
-      {
         title: '操作',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'operation' }
@@ -121,23 +114,15 @@ export default {
       tableData: [],
       dialog: {
         title: '',
-        visible: false
+        visible: false,
+        id: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
       form: {
-        authority_category: [],
+        authorities: [],
         status: ''
       },
-      rules: {
-      },
-      // categroyList: [
-      //   { name: '招生區間', value: 1 },
-      //   { name: '名單來源', value: 2 },
-      //   { name: '名單活動', value: 3 },
-      //   { name: '退班原因', value: 4 },
-      //   { name: '批量上傳', value: 5 }
-      // ],
       modalLoading: false,
       tableLoading: false,
       authorityList: []
@@ -166,28 +151,50 @@ export default {
         // do nothing
       }
     },
-    handleCancel() {
-      this.$refs.ruleForm.resetFields()
-      Object.assign(this.form, this.resetForm())
+    async getAuthorityItem(id) {
+      this.tableLoading = true
+      try {
+        const { data } = await getAuthorityItem(id)
+        this.tableLoading = false
+        return data
+      } catch (error) {
+        // do nothing
+      }
     },
-    openDialog(item) {
+    async openDialog(item) {
+      const data = await this.getAuthorityItem(item.id)
       this.dialog.visible = true
       this.dialog.title = '修改'
+      this.dialog.id = item.id
       Object.assign(this.form, {
-        authority_category: item.authority_category,
-        status: item.status
+        authorities: data.authorities,
+        status: item.status === '1'
       })
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    async submit() {
+      this.modalLoading = true
+      try {
+        await putActivityItem(this.dialog.id, {
+          authorities: this.form.authorities,
+          status: this.form.status
+        })
+        this.$message.success('更新成功')
+        this.dialog.visible = false
+        this.handleCancel()
+        this.getBranchList()
+      } catch (error) {
+        // do nothing
+      }
+      this.modalLoading = false
+    },
+    handleCancel() {
+      Object.assign(this.form, this.resetForm())
+    },
+    resetForm() {
+      return {
+        authorities: [],
+        status: ''
+      }
     }
   }
 }
