@@ -7,11 +7,8 @@
       >
         <a-form-model-item label="課程類型" style="margin-bottom: 0;">
           <a-select v-model="form.course" style="width: 150px;" placeholder="請選擇課程類型">
-            <a-select-option value="child">
-              兒童課程
-            </a-select-option>
-            <a-select-option value="adult">
-              成人課程
+            <a-select-option v-for="classItem in classList" :key="classItem.id">
+              {{ classItem.class_name }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -555,10 +552,18 @@ export default {
       },
       settingDialog: {
         show: false
-      }
+      },
+      classList: []
     }
   },
+  created() {
+    this.getClassList()
+  },
   methods: {
+    async getClassList() {
+      const data = await this.$store.dispatch('listInfo/getClassList')
+      this.classList = data
+    },
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
