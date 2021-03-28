@@ -5,7 +5,7 @@
         :columns="columns"
         :data-source="tableData"
         bordered
-        :loading="loading"
+        :loading="tableLoading"
         row-key="id"
         size="small"
         :pagination="{pageSize:11}"
@@ -14,7 +14,7 @@
           <span v-text="text ? '總部' : '教學中心' "></span>
         </template>
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" @click="openDialog(record)" />
@@ -28,6 +28,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         :width="600"
         @ok="submit"
         @cancel="handleCancel"
@@ -41,15 +42,17 @@
             :wrapper-col="wrapperCol"
           >
             <a-form-model-item label="權限" prop="authority_category">
-              <a-checkbox-group v-model="form.authority_category">
-                <a-checkbox
-                  v-for="(category, index) in categroyList"
-                  :key="index"
-                  :value="category.value"
-                >
-                  {{ category.name }}
-                </a-checkbox>
-              </a-checkbox-group>
+              <template v-for="authority in authorityList">
+                <a-checkbox-group :key="authority.name" v-model="form.authority_category">
+                  <a-checkbox
+                    v-for="(child, index) in authority.children"
+                    :key="index"
+                    :value="child.id"
+                  >
+                    {{ child.name }}
+                  </a-checkbox>
+                </a-checkbox-group>
+              </template>
             </a-form-model-item>
             <a-form-model-item label="狀態">
               <a-switch v-model="form.status" />
@@ -66,6 +69,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 import { getBranchList } from '@/api/branch'
+import { getAuthorityList } from '@/api/authority'
 export default {
   name: 'Permission',
   components: {
@@ -127,28 +131,40 @@ export default {
       },
       rules: {
       },
-      categroyList: [
-        { name: '招生區間', value: 1 },
-        { name: '名單來源', value: 2 },
-        { name: '名單活動', value: 3 },
-        { name: '退班原因', value: 4 }
-      ],
-      loading: false
+      // categroyList: [
+      //   { name: '招生區間', value: 1 },
+      //   { name: '名單來源', value: 2 },
+      //   { name: '名單活動', value: 3 },
+      //   { name: '退班原因', value: 4 },
+      //   { name: '批量上傳', value: 5 }
+      // ],
+      modalLoading: false,
+      tableLoading: false,
+      authorityList: []
     }
   },
   created() {
     this.getBranchList()
+    this.getAuthorityList()
   },
   methods: {
     async getBranchList() {
-      this.loading = true
+      this.tableLoading = true
       try {
         const { data } = await getBranchList()
         this.tableData = data
       } catch {
         // do nothing
       }
-      this.loading = false
+      this.tableLoading = false
+    },
+    async getAuthorityList() {
+      try {
+        const { data } = await getAuthorityList()
+        this.authorityList = data
+      } catch (error) {
+        // do nothing
+      }
     },
     handleCancel() {
       this.$refs.ruleForm.resetFields()
