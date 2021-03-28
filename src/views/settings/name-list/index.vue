@@ -8,14 +8,15 @@
         :columns="columns"
         :data-source="tableData"
         bordered
-        :loading="loading"
+        :loading="tableLoading"
         size="small"
+        row-key="id"
       >
         <template slot="type" slot-scope="text">
-          <span v-text="text === 'default' ? '預設' : '自訂'"></span>
+          <span v-text="text === 'default' ? '自訂' : '活動'"></span>
         </template>
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
@@ -29,6 +30,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -40,11 +42,14 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="名單來源" prop="listSource">
-              <a-input v-model="form.listSource" />
+            <a-form-model-item v-if="isAdd" label="名單來源" prop="list_resource_name">
+              <a-input v-model="form.list_resource_name" />
             </a-form-model-item>
-            <a-form-model-item label="聯絡天數" prop="contactCount">
-              <a-input-number v-model="form.contactCount" :min="1" />
+            <a-form-model-item v-if="isEdit && dialog.type === 'default'" label="名單來源" prop="list_resource_name">
+              <a-input v-model="form.list_resource_name" />
+            </a-form-model-item>
+            <a-form-model-item label="聯絡天數" prop="due_days">
+              <a-input-number v-model="form.due_days" :min="1" />
             </a-form-model-item>
             <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
@@ -60,7 +65,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import { getResourceList } from '@/api/resource'
+import { getResourceList, postResourceItem, putResourceItem } from '@/api/resource'
 export default {
   name: 'NameList',
   components: {
@@ -106,23 +111,27 @@ export default {
     return {
       columns,
       tableData: [],
-      loading: false,
+      modalLoading: false,
+      tableLoading: false,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
-        listSource: '',
-        contactCount: undefined
+        list_resource_name: '',
+        due_days: undefined,
+        status: ''
       },
       dialog: {
         title: '',
         mode: '',
-        visible: false
+        visible: false,
+        id: '',
+        type: ''
       },
       rules: {
-        listSource: [
+        list_resource_name: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        contactCount: [
+        due_days: [
           { required: true, message: '必填', trigger: 'blur' }
         ]
       }
@@ -131,6 +140,9 @@ export default {
   computed: {
     isEdit() {
       return this.dialog.mode === 'edit'
+    },
+    isAdd() {
+      return this.dialog.mode === 'add'
     }
   },
   created() {
@@ -138,14 +150,14 @@ export default {
   },
   methods: {
     async getResourceList() {
-      this.loading = true
+      this.tableLoading = true
       try {
         const { data } = await getResourceList()
         this.tableData = data
       } catch (error) {
         // do nothing
       }
-      this.loading = false
+      this.tableLoading = false
     },
     openDialog(mode, item) {
       this.dialog.visible = true
@@ -153,30 +165,69 @@ export default {
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          this.dialog.id = ''
+          this.dialog.type = ''
           break
         case 'edit':
           this.dialog.title = '修改'
-          Object.assign(this.form, item)
+          this.dialog.id = item.id
+          this.dialog.type = item.type
+          Object.assign(this.form, {
+            list_resource_name: item.list_resource_name,
+            due_days: item.due_days,
+            status: item.status === '1'
+          })
           break
         default:
           break
       }
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+    async submit() {
+      this.modalLoading = true
+      if (this.dialog.mode === 'add') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await postResourceItem({
+            list_resource_name: this.form.list_resource_name,
+            due_days: this.form.due_days
+          })
+          this.$message.success('新增成功')
           this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.handleCancel()
+          this.getResourceList()
+        } catch (error) {
+          // do nothing
         }
-      })
+      }
+      if (this.dialog.mode === 'edit') {
+        try {
+          await this.$refs.ruleForm.validate()
+          const form = {}
+          if (this.dialog.type === 'default') {
+            form.list_resource_name = this.form.list_resource_name
+            form.due_days = this.form.due_days
+            form.status = this.form.status
+          }
+          if (this.dialog.type === 'activity') {
+            form.due_days = this.form.due_days
+            form.status = this.form.status
+          }
+          await putResourceItem(this.dialog.id, form)
+          this.$message.success('更新成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getResourceList()
+        } catch (error) {
+          // do nothing
+        }
+      }
+      this.modalLoading = false
     },
     resetForm() {
       return {
-        listSource: '',
-        contactCount: undefined
+        list_resource_name: '',
+        due_days: undefined,
+        status: ''
       }
     },
     handleCancel() {

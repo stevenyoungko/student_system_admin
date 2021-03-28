@@ -8,7 +8,7 @@
         :columns="columns"
         :data-source="tableData"
         bordered
-        :loading="loading"
+        :loading="tableLoading"
         row-key="id"
         size="small"
         :pagination="{pageSize:11}"
@@ -17,7 +17,7 @@
           <span v-text="text === 'default' ? '預設' : '自訂'"></span>
         </template>
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text=== '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
@@ -32,6 +32,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -43,18 +44,28 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="招生名稱" prop="title">
-              <a-input v-model="form.title" />
+            <a-form-model-item v-if="isAdd" label="招生名稱" prop="recruit_name">
+              <a-input v-model="form.recruit_name" />
             </a-form-model-item>
-            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
-              <a-switch v-model="form.status" />
+            <a-form-model-item v-if="isEdit && dialog.type === 'custom'" label="招生名稱" prop="recruit_name">
+              <a-input v-model="form.recruit_name" />
             </a-form-model-item>
-            <a-form-model-item label="起迄时间" prop="dateRange">
+            <a-form-model-item v-if="isAdd" label="起迄时间" prop="dateRange">
               <a-range-picker
                 v-model="form.dateRange"
                 value-format="YYYY-MM-DD"
                 :placeholder="['开始日期', '结束日期']"
               />
+            </a-form-model-item>
+            <a-form-model-item v-if="isEdit && dialog.type === 'custom'" label="起迄时间" prop="dateRange">
+              <a-range-picker
+                v-model="form.dateRange"
+                value-format="YYYY-MM-DD"
+                :placeholder="['开始日期', '结束日期']"
+              />
+            </a-form-model-item>
+            <a-form-model-item v-if="isEdit" label="狀態" prop="status">
+              <a-switch v-model="form.status" />
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -67,7 +78,8 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import { getRecruitList } from '@/api/recruit'
+import { getRecruitList, postRecruitItem, putRecruitItem } from '@/api/recruit'
+import moment from 'moment'
 export default {
   name: 'Admissions',
   components: {
@@ -120,27 +132,35 @@ export default {
       dialog: {
         title: '',
         mode: '',
-        visible: false
+        visible: false,
+        id: '',
+        type: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
-        title: '',
-        dateRange: []
+        recruit_name: '',
+        dateRange: ['', ''],
+        status: ''
       },
       rules: {
-        title: [
+        recruit_name: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
         dateRange: [
           { required: true, message: '必填', trigger: 'change' }
         ]
-      }
+      },
+      modalLoading: false,
+      tableLoading: false
     }
   },
   computed: {
     isEdit() {
       return this.dialog.mode === 'edit'
+    },
+    isAdd() {
+      return this.dialog.mode === 'add'
     }
   },
   created() {
@@ -148,53 +168,91 @@ export default {
   },
   methods: {
     async getRecruitList() {
-      this.loading = true
+      this.tableLoading = true
       try {
         const { data } = await getRecruitList()
         this.tableData = data
       } catch (error) {
         // do nothing
       }
-      this.loading = false
+      this.tableLoading = false
     },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
       const form = {
-        title: '',
+        recruit_name: '',
+        status: '',
         dateRange: []
       }
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          this.dialog.id = ''
+          this.dialog.type = ''
           break
         case 'edit':
           this.dialog.title = '修改'
-          form.title = item.title
-          form.status = item.status
-          form.dateRange[0] = item.start_at
-          form.dateRange[1] = item.end_at
+          this.dialog.id = item.id
+          this.dialog.type = item.type
+          form.recruit_name = item.recruit_name
+          form.status = item.status === '1'
+          form.dateRange[0] = moment(item.start_date)
+          form.dateRange[1] = moment(item.end_date)
           Object.assign(this.form, form)
           break
         default:
           break
       }
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+    async submit() {
+      this.modalLoading = true
+      if (this.dialog.mode === 'add') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await postRecruitItem({
+            recruit_name: this.form.recruit_name,
+            start_date: this.form.dateRange[0],
+            end_date: this.form.dateRange[1]
+          })
+          this.$message.success('新增成功')
+          this.modalLoading = false
           this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.handleCancel()
+          this.getRecruitList()
+        } catch (error) {
+          // do nothing
         }
-      })
+      }
+      if (this.dialog.mode === 'edit') {
+        try {
+          await this.$refs.ruleForm.validate()
+          const form = {}
+          if (this.dialog.type === 'default') {
+            form.status = this.form.status
+          }
+          if (this.dialog.type === 'custom') {
+            form.recruit_name = this.form.recruit_name
+            form.start_date = moment(this.form.dateRange[0]).format('YYYY-MM-DD HH:mm:ss')
+            form.end_date = moment(this.form.dateRange[1]).format('YYYY-MM-DD HH:mm:ss')
+            form.status = this.form.status
+          }
+          await putRecruitItem(this.dialog.id, form)
+          this.$message.success('更新成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getRecruitList()
+        } catch (error) {
+          // do nothing
+        }
+      }
+      this.modalLoading = false
     },
     resetForm() {
       return {
-        title: '',
-        dateRange: []
+        recruit_name: '',
+        dateRange: [],
+        status: ''
       }
     },
     handleCancel() {
