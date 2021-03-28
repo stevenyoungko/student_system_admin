@@ -56,3 +56,31 @@ export const rules = {
   positiveInt_rule: { trigger: 'blur', validator: positiveInt },
   integer_rule: { trigger: 'blur', validator: integer }
 }
+
+/**
+ * 一般密碼
+ * 长度：6~20
+ * 限制符号：半形、英文、数字（不含空白）
+ * @param {string} password
+ * @returns {Boolean}
+ */
+export function validateNormalPassword(password) {
+  if (/\s/g.test(password)) {
+    return false
+  }
+  return /^[A-Za-z\d]{6,20}$/.test(password)
+}
+
+/**
+ * 帳號
+ * 长度：6~20
+ * 限制符号：半形、英文、数字、底线（不含空白）
+ * @param {string} account
+ * @returns {Boolean}
+ */
+export function validateAccount(account) {
+  if (/\s/g.test(account)) {
+    return false
+  }
+  return /^[A-Za-z\d_]{6,20}$/.test(account)
+}

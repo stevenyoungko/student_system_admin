@@ -216,7 +216,6 @@ export default {
             end_date: this.form.dateRange[1]
           })
           this.$message.success('新增成功')
-          this.modalLoading = false
           this.dialog.visible = false
           this.handleCancel()
           this.getRecruitList()

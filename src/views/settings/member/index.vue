@@ -14,7 +14,7 @@
         row-key="id"
       >
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
@@ -64,7 +64,8 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import { getMemberList, postActivity } from '@/api/member'
+import { getMemberList, postMemeber, putMemberItem } from '@/api/member'
+import { validateNormalPassword, validateAccount } from '@/utils/validate'
 
 export default {
   name: 'Member',
@@ -99,6 +100,20 @@ export default {
         scopedSlots: { customRender: 'operation' }
       }
     ]
+    // const passwordValidator = (rule, value, cb) => {
+    //   if (!validateNormalPassword(value)) {
+    //     cb(new Error('长度：6~20 限制符号：半形、英文、数字（不含空白）'))
+    //   } else {
+    //     cb()
+    //   }
+    // }
+    // const accountValidator = (rule, value, cb) => {
+    //   if (!validateAccount(value)) {
+    //     cb(new Error('长度：6~20 限制符号：半形、英文、数字、底线（不含空白）'))
+    //   } else {
+    //     cb()
+    //   }
+    // }
     return {
       columns,
       tableData: [],
@@ -107,21 +122,23 @@ export default {
       dialog: {
         title: '',
         visible: false,
-        mode: ''
+        mode: '',
+        id: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
         account: '',
         password: '',
-        account_name: ''
+        account_name: '',
+        status: ''
       },
       rules: {
         account: [
-          { required: true, message: '必填', trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '必填' }
         ],
         password: [
-          { required: true, message: '必填', trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '必填' }
         ],
         account_name: [
           { required: true, message: '必填', trigger: 'blur' }
@@ -154,10 +171,16 @@ export default {
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          this.dialog.id = ''
           break
         case 'edit':
           this.dialog.title = '修改'
-          Object.assign(this.form, item)
+          this.dialog.id = item.id
+          Object.assign(this.form, {
+            account: item.account,
+            account_name: item.account_name,
+            status: item.status === '1'
+          })
           break
         default:
           break
@@ -168,22 +191,43 @@ export default {
       if (this.dialog.mode === 'add') {
         try {
           await this.$refs.ruleForm.validate()
-          await postActivity(this.form)
+          await postMemeber(this.dialog.id, {
+            account: this.form.account,
+            password: this.form.password,
+            account_name: this.form.account_name
+          })
           this.$message.success('新增成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getMemberList()
         } catch (error) {
-          console.log(error)
         // do nothing
         }
       }
+      if (this.dialog.mode === 'edit') {
+        try {
+          await putMemberItem(this.dialog.id, {
+            account: this.form.account,
+            password: this.form.password,
+            account_name: this.form.account_name,
+            status: this.form.status
+          })
+          this.$message.success('更新成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getMemberList()
+        } catch (error) {
+          // do nothing
+        }
+      }
       this.modalLoading = false
-      this.dialog.visible = false
-      this.getMemberList()
     },
     resetForm() {
       return {
         account: '',
         password: '',
-        account_name: ''
+        account_name: '',
+        status: ''
       }
     },
     handleCancel() {

@@ -11,11 +11,6 @@ export const postMemeber = (data) => request({
   data
 })
 
-export const getMemberItem = (id) => request({
-  url: `/api/member/${id}`,
-  method: 'GET'
-})
-
 export const putMemberItem = (id, data) => request({
   url: `/api/member/${id}`,
   method: 'PUT',
