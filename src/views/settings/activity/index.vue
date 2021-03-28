@@ -18,7 +18,7 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-          <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
+          <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
         </template>
       </a-table>
     </template>
