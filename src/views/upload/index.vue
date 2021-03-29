@@ -9,11 +9,8 @@
       >
         <a-form-model-item label="課程類型">
           <a-select v-model="form.course" @change="changeComponent">
-            <a-select-option value="child">
-              兒童課程
-            </a-select-option>
-            <a-select-option value="adult">
-              成人課程
+            <a-select-option v-for="classItem in classList" :key="classItem.id">
+              {{ classItem.class_name }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -56,12 +53,20 @@ export default {
   data() {
     return {
       form: {
-        course: 'child'
+        course: undefined
       },
-      currentComponent: ChildForm
+      currentComponent: ChildForm,
+      classList: []
     }
   },
+  created() {
+    this.getClassList()
+  },
   methods: {
+    async getClassList() {
+      const data = await this.$store.dispatch('listInfo/getClassList')
+      this.classList = data
+    },
     changeComponent() {
       switch (this.form.course) {
         case 'child':

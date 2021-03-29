@@ -4,7 +4,14 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="loading"
+        size="small"
+        :pagination="{pageSize:11}"
+      >
         <template slot="status" slot-scope="text">
           <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
         </template>
@@ -58,6 +65,7 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import { getGroupList } from '@/api/group'
 import moment from 'moment'
 export default {
   name: 'SentNews',
@@ -70,11 +78,15 @@ export default {
     const columns = [
       {
         title: '群組名稱',
-        dataIndex: 'groupName'
+        dataIndex: 'group_name'
       },
       {
         title: '建立者',
-        dataIndex: 'accountName'
+        dataIndex: 'account_name'
+      },
+      {
+        title: '教學中心',
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -94,14 +106,8 @@ export default {
     ]
     return {
       columns,
-      tableData: [
-        {
-          groupName: '群組名稱',
-          accountName: 'Steven',
-          status: true,
-          created_at: '2021-03-08'
-        }
-      ],
+      tableData: [],
+      loading: false,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
@@ -128,7 +134,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getGroupList()
+  },
   methods: {
+    async getGroupList() {
+      this.loading = true
+      try {
+        const { data } = await getGroupList()
+        this.tableData = data
+      } catch {
+        // do nothing
+      }
+      this.loading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode

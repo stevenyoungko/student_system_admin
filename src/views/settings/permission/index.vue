@@ -1,9 +1,20 @@
 <template>
   <PageContainer>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="tableLoading"
+        row-key="id"
+        size="small"
+        :pagination="{pageSize:11}"
+      >
+        <template slot="level" slot-scope="text">
+          <span v-text="text ? '總部' : '教學中心' "></span>
+        </template>
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" @click="openDialog(record)" />
@@ -17,6 +28,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         :width="600"
         @ok="submit"
         @cancel="handleCancel"
@@ -25,19 +37,22 @@
           <a-form-model
             ref="ruleForm"
             :model="form"
-            :rules="rules"
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="權限" prop="authority_category">
-              <a-checkbox-group v-model="form.authority_category">
-                <a-checkbox
-                  v-for="(category, index) in categroyList"
-                  :key="index"
-                  :value="category.value"
-                >
-                  {{ category.name }}
-                </a-checkbox>
+            <a-form-model-item label="權限">
+              <a-checkbox-group v-model="form.authorities">
+                <div v-for="authority in authorityList" :key="authority.id">
+                  <h3>{{ authority.name }}</h3>
+                  <a-checkbox
+                    v-for="(child, index) in authority.children"
+                    :key="index"
+                    :value="child.id"
+                    style="margin-bottom: 12px;"
+                  >
+                    {{ child.name }}
+                  </a-checkbox>
+                </div>
               </a-checkbox-group>
             </a-form-model-item>
             <a-form-model-item label="狀態">
@@ -54,7 +69,8 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
-import mock from '../permission/mock'
+import { getBranchList } from '@/api/branch'
+import { getAuthorityList, getAuthorityItem, putActivityItem } from '@/api/authority'
 export default {
   name: 'Permission',
   components: {
@@ -77,21 +93,14 @@ export default {
         dataIndex: 'branch_name'
       },
       {
-        title: '權限級別',
-        dataIndex: 'authority'
-      },
-      {
-        title: '權限',
-        dataIndex: 'authority_category'
+        title: '層級',
+        dataIndex: 'level',
+        scopedSlots: { customRender: 'level' }
       },
       {
         title: '狀態',
         dataIndex: 'status',
         scopedSlots: { customRender: 'status' }
-      },
-      {
-        title: '更新時間',
-        dataIndex: 'update_time'
       },
       {
         title: '操作',
@@ -102,50 +111,90 @@ export default {
 
     return {
       columns,
-      tableData: mock,
+      tableData: [],
       dialog: {
         title: '',
-        visible: false
+        visible: false,
+        id: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
       form: {
-        authority_category: [],
+        authorities: [],
         status: ''
       },
-      rules: {
-      },
-      categroyList: [
-        { name: '招生區間', value: 1 },
-        { name: '名單來源', value: 2 },
-        { name: '名單活動', value: 3 },
-        { name: '退班原因', value: 4 }
-      ]
+      modalLoading: false,
+      tableLoading: false,
+      authorityList: []
     }
   },
+  created() {
+    this.getBranchList()
+    this.getAuthorityList()
+  },
   methods: {
-    handleCancel() {
-      this.$refs.ruleForm.resetFields()
-      Object.assign(this.form, this.resetForm())
+    async getBranchList() {
+      this.tableLoading = true
+      try {
+        const { data } = await getBranchList()
+        this.tableData = data
+      } catch {
+        // do nothing
+      }
+      this.tableLoading = false
     },
-    openDialog(item) {
+    async getAuthorityList() {
+      try {
+        const { data } = await getAuthorityList()
+        this.authorityList = data
+      } catch (error) {
+        // do nothing
+      }
+    },
+    async getAuthorityItem(id) {
+      this.tableLoading = true
+      try {
+        const { data } = await getAuthorityItem(id)
+        this.tableLoading = false
+        return data
+      } catch (error) {
+        // do nothing
+      }
+    },
+    async openDialog(item) {
+      const data = await this.getAuthorityItem(item.id)
       this.dialog.visible = true
       this.dialog.title = '修改'
+      this.dialog.id = item.id
       Object.assign(this.form, {
-        authority_category: item.authority_category,
-        status: item.status
+        authorities: data.authorities,
+        status: item.status === '1'
       })
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    async submit() {
+      this.modalLoading = true
+      try {
+        await putActivityItem(this.dialog.id, {
+          authorities: this.form.authorities,
+          status: this.form.status
+        })
+        this.$message.success('更新成功')
+        this.dialog.visible = false
+        this.handleCancel()
+        this.getBranchList()
+      } catch (error) {
+        // do nothing
+      }
+      this.modalLoading = false
+    },
+    handleCancel() {
+      Object.assign(this.form, this.resetForm())
+    },
+    resetForm() {
+      return {
+        authorities: [],
+        status: ''
+      }
     }
   }
 }

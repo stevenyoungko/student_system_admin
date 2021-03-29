@@ -9,7 +9,7 @@ import { message } from 'ant-design-vue'
 // create an axios instance
 let axiosQueue = 0
 const service = axios.create({
-  baseURL: '', // url = base url + request url
+  baseURL: '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 60 * 1000 // request timeout
 })
@@ -17,48 +17,24 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+    if (config.method === 'put' && config.data.status) {
+      config.data.status = config.data.status ? '1' : '0'
+    }
     // do something before request is sent
     if (store.getters.token) {
-      config.headers['Authorization'] = store.getters.token
+      config.headers['token'] = store.getters.token
     }
 
     if (config.isLoading) {
       axiosQueue++
       store.dispatch('app/setGlobalLoading', config.isLoading)
     }
-
-    if (config.method !== 'get') {
-      let tempData
-      if (Array.isArray(config.data)) {
-        tempData = config.data
-      } else {
-        tempData = { ...config.data }
-      }
-      if (config.useJson) {
-        config.headers = {
-          'Content-Type': 'application/json',
-          ...config.headers
-        }
-        config.data = JSON.stringify(tempData)
-      } else if (config.useMuit) {
-        config.headers = {
-          'Content-Type': 'multipart/form-data',
-          ...config.headers
-        }
-      } else {
-        config.headers = {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          ...config.headers
-        }
-        config.data = qs.stringify(tempData)
-      }
-    }
-
     return config
   },
   error => {
     // do something with error request
     console.log(error) // for debug
+    store.dispatch('app/setGlobalLoading', false)
     return Promise.reject(error)
   }
 )
@@ -75,11 +51,16 @@ service.interceptors.response.use(
       }
     }
     // 成功
-    const data = response.data ? response.data : {}
-    return [data, null]
+    if (response.config.responseType === 'blob') {
+      return response
+    } else {
+      const res = response.data
+      return res
+    }
   },
   error => {
     const { response } = error
+
     if (!response || !response.hasOwnProperty('data')) {
       axiosQueue--
       store.dispatch('app/setGlobalLoading', false)
@@ -94,6 +75,17 @@ service.interceptors.response.use(
       } else {
         axiosQueue--
       }
+    }
+
+    // for 取消上傳
+    if (error.message === 'cancel_upload' || error.message === undefined) {
+      return Promise.reject(error)
+    }
+
+    // for timeout 超時處理
+    if (error.message.includes('timeout')) {
+      message.error({ content: '连线超时', duration: 5 })
+      return Promise.reject(error)
     }
 
     // http status error handler
@@ -124,7 +116,7 @@ service.interceptors.response.use(
         break
     }
 
-    return [null, response.data]
+    return Promise.reject(error)
   }
 )
 

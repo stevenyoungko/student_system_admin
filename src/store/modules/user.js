@@ -1,4 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/localStorage'
+import { login } from '@/api/user'
 
 const state = {
   token: getToken()
@@ -19,14 +20,15 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { account, password } = userInfo
-
     return new Promise((resolve, reject) => {
-      if (account === 'admin' && password === '123456') {
-        commit('SET_TOKEN', 'token-6866')
-        resolve('done')
-      } else {
-        reject('wrong value!')
-      }
+      login({ account: account.trim(), password: password })
+        .then(res => {
+          commit('SET_TOKEN', res.data.token)
+          resolve('done')
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 

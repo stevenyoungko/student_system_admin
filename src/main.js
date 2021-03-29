@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-// styles
-import '@/styles/index.less'
-
 // router
 import router from '@/router/index'
 
@@ -11,8 +8,12 @@ import router from '@/router/index'
 import store from '@/store/index'
 
 // ant-design-vue
-// 按須加載需要的 antd 組件
-import '@/plugins/antd-vue'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+Vue.use(Antd)
+
+// styles
+import '@/styles/index.less'
 
 Vue.config.productionTip = false
 

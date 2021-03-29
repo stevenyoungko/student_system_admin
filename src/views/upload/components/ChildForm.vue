@@ -26,14 +26,29 @@
       <a-input v-model="form.phone" placeholder="請輸入連絡電話" />
     </a-form-model-item>
     <a-form-model-item label="地址" prop="region">
-      <a-select v-model="form.region" placeholder="請選擇地址">
-        <a-select-option value="1">
-          台北市
-        </a-select-option>
-        <a-select-option value="2">
-          新北市
+      <a-select
+        v-model="form.region"
+        placeholder="請選縣市"
+        @change="getRegionList(form.region)"
+      >
+        <a-select-option
+          v-for="city in cityList"
+          :key="city.id"
+          :value="city.id"
+        >
+          {{ city.city_name }}
         </a-select-option>
       </a-select>
+      <a-select v-model="form.region2" placeholder="請選擇鄉鎮市區">
+        <a-select-option
+          v-for="region in regionList"
+          :key="region.id"
+          :value="region.id"
+        >
+          {{ region.region_name }}
+        </a-select-option>
+      </a-select>
+      <a-input v-model="form.region3" placeholder="請輸入地址" />
     </a-form-model-item>
     <a-form-model-item label="電子信箱" prop="email">
       <a-input v-model="form.email" placeholder="請輸入電子信箱" />
@@ -100,6 +115,7 @@
 </template>
 
 <script>
+import { getRegionList } from '@/api/listInfo'
 export default {
   name: 'ChildForm',
   data() {
@@ -113,6 +129,8 @@ export default {
         cellphone: '',
         phone: '',
         region: undefined,
+        region2: undefined,
+        region3: undefined,
         email: '',
         news: undefined,
         teach: undefined,
@@ -133,10 +151,27 @@ export default {
         listType: [{ required: true, message: '請選擇名單類型', trigger: 'change' }],
         listSource: [{ required: true, message: '請選擇名單來源', trigger: 'change' }],
         contact: [{ required: true, message: '請選擇方便聯繫時段', trigger: 'change' }]
-      }
+      },
+      cityList: [],
+      regionList: []
     }
   },
+  created() {
+    this.getCityList()
+  },
   methods: {
+    async getCityList() {
+      const data = await this.$store.dispatch('listInfo/getCityList')
+      this.cityList = data
+    },
+    async getRegionList(city) {
+      try {
+        const { data } = await getRegionList(city)
+        this.regionList = data
+      } catch (error) {
+        // do nothing
+      }
+    },
     onSubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {

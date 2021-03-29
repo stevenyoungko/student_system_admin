@@ -4,12 +4,17 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="data" bordered>
-        <template slot="permission" slot-scope="text">
-          <span v-text="text ? '總部' : '全體'"></span>
-        </template>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="tableLoading"
+        size="small"
+        :pagination="{pageSize:11}"
+        row-key="id"
+      >
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
@@ -24,6 +29,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -41,21 +47,11 @@
             <a-form-model-item label="密碼" prop="password">
               <a-input v-model="form.password" />
             </a-form-model-item>
-            <a-form-model-item label="姓名" prop="name">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="姓名" prop="account_name">
+              <a-input v-model="form.account_name" />
             </a-form-model-item>
             <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
-            </a-form-model-item>
-            <a-form-model-item v-if="isAdd" label="權限" prop="permission">
-              <a-radio-group v-model="form.permission">
-                <a-radio :value="1">
-                  總部
-                </a-radio>
-                <a-radio :value="0">
-                  全體
-                </a-radio>
-              </a-radio-group>
             </a-form-model-item>
           </a-form-model>
         </ScrollableDialogContainer>
@@ -68,6 +64,9 @@
 import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
+import { getMemberList, postMemeber, putMemberItem } from '@/api/member'
+import { validateNormalPassword, validateAccount } from '@/utils/validate'
+
 export default {
   name: 'Member',
   components: {
@@ -83,16 +82,11 @@ export default {
       },
       {
         title: '姓名',
-        dataIndex: 'name'
-      },
-      {
-        title: '權限',
-        dataIndex: 'permission',
-        scopedSlots: { customRender: 'permission' }
+        dataIndex: 'account_name'
       },
       {
         title: '教學中心',
-        dataIndex: 'branch'
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -106,88 +100,134 @@ export default {
         scopedSlots: { customRender: 'operation' }
       }
     ]
-
-    const data = []
-    for (let i = 1; i < 11; i++) {
-      data.push({
-        account: `account ${i}`,
-        password: `Steven ${i}`,
-        name: `Steven ${i}`,
-        permission: 1,
-        branch: '總部',
-        status: true
-      })
-    }
+    // const passwordValidator = (rule, value, cb) => {
+    //   if (!validateNormalPassword(value)) {
+    //     cb(new Error('长度：6~20 限制符号：半形、英文、数字（不含空白）'))
+    //   } else {
+    //     cb()
+    //   }
+    // }
+    // const accountValidator = (rule, value, cb) => {
+    //   if (!validateAccount(value)) {
+    //     cb(new Error('长度：6~20 限制符号：半形、英文、数字、底线（不含空白）'))
+    //   } else {
+    //     cb()
+    //   }
+    // }
     return {
       columns,
-      data,
+      tableData: [],
+      tableLoading: false,
+      modalLoading: false,
       dialog: {
         title: '',
         visible: false,
-        mode: ''
+        mode: '',
+        id: ''
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       form: {
         account: '',
         password: '',
-        name: '',
-        permission: 1
+        account_name: '',
+        status: ''
       },
       rules: {
         account: [
-          { required: true, message: '必填', trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '必填' }
         ],
         password: [
-          { required: true, message: '必填', trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '必填' }
         ],
-        name: [
+        account_name: [
           { required: true, message: '必填', trigger: 'blur' }
         ]
       }
     }
   },
   computed: {
-    isAdd() {
-      return this.dialog.mode === 'add'
-    },
     isEdit() {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getMemberList()
+  },
   methods: {
+    async getMemberList() {
+      this.tableLoading = true
+      try {
+        const { data } = await getMemberList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.tableLoading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
       switch (mode) {
         case 'add':
           this.dialog.title = '新建'
+          this.dialog.id = ''
           break
         case 'edit':
           this.dialog.title = '修改'
-          Object.assign(this.form, item)
+          this.dialog.id = item.id
+          Object.assign(this.form, {
+            account: item.account,
+            account_name: item.account_name,
+            status: item.status === '1'
+          })
           break
         default:
           break
       }
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+    async submit() {
+      this.modalLoading = true
+      if (this.dialog.mode === 'add') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await postMemeber(this.dialog.id, {
+            account: this.form.account,
+            password: this.form.password,
+            account_name: this.form.account_name
+          })
+          this.$message.success('新增成功')
           this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.handleCancel()
+          this.getMemberList()
+        } catch (error) {
+        // do nothing
         }
-      })
+      }
+      if (this.dialog.mode === 'edit') {
+        try {
+          await putMemberItem(this.dialog.id, {
+            account: this.form.account,
+            password: this.form.password,
+            account_name: this.form.account_name,
+            status: this.form.status
+          })
+          this.$message.success('更新成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getMemberList()
+        } catch (error) {
+          // do nothing
+        }
+      }
+      this.modalLoading = false
     },
     resetForm() {
       return {
         account: '',
         password: '',
-        name: '',
-        permission: 1
+        account_name: '',
+        status: ''
       }
     },
     handleCancel() {

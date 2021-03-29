@@ -4,13 +4,21 @@
       <a-button type="primary" @click="openDialog('add')">新建</a-button>
     </template>
     <template #content>
-      <a-table :columns="columns" :data-source="tableData" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="tableData"
+        bordered
+        :loading="tableLoading"
+        size="small"
+        row-key="id"
+        :pagination="{pageSize:11}"
+      >
         <template slot="status" slot-scope="text">
-          <a-tag :color="text ? 'green' : 'red'">{{ text ? '啟用' : '停用' }} </a-tag>
+          <a-tag :color="text === '1' ? 'green' : 'red'">{{ text === '1' ? '啟用' : '停用' }} </a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <DefaultButton type="primary" text="修改" style="margin-right: 6px;" @click="openDialog('edit', record)" />
-          <DefaultButton type="danger" text="刪除" style="margin-right: 6px;" />
+          <DefaultButton type="danger" text="停用" style="margin-right: 6px;" />
         </template>
       </a-table>
     </template>
@@ -21,6 +29,7 @@
         :mask-closable="false"
         cancel-text="取消"
         ok-text="提交"
+        :confirm-loading="modalLoading"
         @ok="submit"
         @cancel="handleCancel"
       >
@@ -32,18 +41,18 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
           >
-            <a-form-model-item label="活動名稱" prop="name">
-              <a-input v-model="form.name" />
+            <a-form-model-item label="活動名稱" prop="activity_name">
+              <a-input v-model="form.activity_name" />
             </a-form-model-item>
-            <a-form-model-item label="活動地點" prop="address">
-              <a-input v-model="form.address" />
+            <a-form-model-item label="活動地點" prop="activity_location">
+              <a-input v-model="form.activity_location" />
             </a-form-model-item>
             <a-form-model-item v-if="isEdit" label="狀態" prop="status">
               <a-switch v-model="form.status" />
             </a-form-model-item>
-            <a-form-model-item label="聯絡到期時間" prop="date">
+            <a-form-model-item label="聯絡到期時間" prop="activity_date">
               <a-date-picker
-                v-model="form.date"
+                v-model="form.activity_date"
                 placeholder="請選擇日期"
                 style="width: 100%;"
                 type="date"
@@ -61,6 +70,7 @@ import PageContainer from '@/components/container/PageContainer'
 import DefaultButton from '@/components/button/DefaultButton'
 import ScrollableDialogContainer from '@/components/dialog/ScrollableDialogContainer'
 import moment from 'moment'
+import { getActivityList, postActivityItem, putActivityItem } from '@/api/activity'
 export default {
   name: 'Activity',
   components: {
@@ -72,19 +82,19 @@ export default {
     const columns = [
       {
         title: '活動名稱',
-        dataIndex: 'name'
+        dataIndex: 'activity_name'
       },
       {
         title: '活動地點',
-        dataIndex: 'address'
+        dataIndex: 'activity_location'
       },
       {
         title: '建立者',
-        dataIndex: 'accountName'
+        dataIndex: 'account_name'
       },
       {
         title: '教學中心',
-        dataIndex: 'branch'
+        dataIndex: 'branch_name'
       },
       {
         title: '狀態',
@@ -93,7 +103,7 @@ export default {
       },
       {
         title: '活動日期',
-        dataIndex: 'date'
+        dataIndex: 'activity_date'
       },
       {
         title: '操作',
@@ -104,48 +114,34 @@ export default {
     ]
     return {
       columns,
-      tableData: [
-        {
-          name: '活動一',
-          address: '101大樓',
-          accountName: 'Steven',
-          branch: '總部',
-          status: true,
-          date: '2021-6-5'
-        },
-        {
-          name: '活動二',
-          address: '松菸',
-          accountName: 'Sean',
-          branch: '分部',
-          status: false,
-          date: '2021-10-5'
-        }
-      ],
+      tableData: [],
       dialog: {
         title: '',
         visible: false,
-        mode: ''
+        mode: '',
+        id: ''
       },
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
       form: {
-        name: '',
-        address: '',
-        date: undefined,
-        status: false
+        activity_name: '',
+        activity_location: '',
+        activity_date: undefined,
+        status: '0'
       },
       rules: {
-        name: [
+        activity_name: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        address: [
+        activity_location: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        date: [
+        activity_date: [
           { required: true, message: '必填', trigger: 'change' }
         ]
-      }
+      },
+      modalLoading: false,
+      tableLoading: false
     }
   },
   computed: {
@@ -153,7 +149,20 @@ export default {
       return this.dialog.mode === 'edit'
     }
   },
+  created() {
+    this.getActivityList()
+  },
   methods: {
+    async getActivityList() {
+      this.tableLoading = true
+      try {
+        const { data } = await getActivityList()
+        this.tableData = data
+      } catch (error) {
+        // do nothing
+      }
+      this.tableLoading = false
+    },
     openDialog(mode, item) {
       this.dialog.visible = true
       this.dialog.mode = mode
@@ -163,33 +172,61 @@ export default {
           break
         case 'edit':
           this.dialog.title = '修改'
+          this.dialog.id = item.id
           Object.assign(this.form, {
-            name: item.name,
-            address: item.address,
-            status: item.status,
-            date: moment(item.date)
+            activity_name: item.activity_name,
+            activity_location: item.activity_location,
+            status: item.status === '1',
+            activity_date: moment(item.activity_date)
           })
           break
         default:
           break
       }
     },
-    submit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+    async submit() {
+      this.modalLoading = true
+      if (this.dialog.mode === 'add') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await postActivityItem({
+            activity_name: this.form.activity_name,
+            activity_location: this.form.activity_location,
+            activity_date: moment(this.form.activity_date).format('YYYY-MM-DD HH:mm:ss')
+          })
+          this.$message.success('新增成功')
           this.dialog.visible = false
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.handleCancel()
+          this.getActivityList()
+        } catch (error) {
+          // do nothing
         }
-      })
+      }
+      if (this.dialog.mode === 'edit') {
+        try {
+          await this.$refs.ruleForm.validate()
+          await putActivityItem(this.dialog.id, {
+            activity_name: this.form.activity_name,
+            activity_location: this.form.activity_location,
+            activity_date: moment(this.form.activity_date).format('YYYY-MM-DD HH:mm:ss'),
+            status: this.form.status
+          })
+          this.$message.success('更新成功')
+          this.dialog.visible = false
+          this.handleCancel()
+          this.getActivityList()
+        } catch (error) {
+          // do nothing
+        }
+      }
+      this.modalLoading = false
     },
     resetForm() {
       return {
-        name: '',
-        address: '',
-        date: undefined
+        activity_name: '',
+        activity_location: '',
+        activity_date: undefined,
+        status: false
       }
     },
     handleCancel() {
