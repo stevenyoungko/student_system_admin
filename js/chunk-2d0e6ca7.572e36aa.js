@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0e6ca7"],{"99f7":function(e,n,i){"use strict";i.r(n);var t=function(){var e=this,n=e.$createElement,i=e._self._c||n;return i("div",[e._v(" OfficialList ")])},a=[],c={name:"OfficialList"},s=c,f=i("2877"),l=Object(f["a"])(s,t,a,!1,null,"191ad55b",null);n["default"]=l.exports}}]);
