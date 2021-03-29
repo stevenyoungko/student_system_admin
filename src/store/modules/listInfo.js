@@ -1,4 +1,4 @@
-import { getClassList } from '@/api/listInfo'
+import { getClassList, getCityList } from '@/api/listInfo'
 
 // cache construtor
 function $_constructor(type, data, everStore = false) {
@@ -8,13 +8,18 @@ function $_constructor(type, data, everStore = false) {
 }
 
 const state = {
-  classList: new $_constructor('array', [])
+  classList: new $_constructor('array', []),
+  cityList: new $_constructor('array', [])
 }
 
 const mutations = {
   SET_CLASS: (state, payload) => {
     state.classList.data = payload
     state.classList.everStore = true
+  },
+  SET_CITY: (state, payload) => {
+    state.cityList.data = payload
+    state.cityList.everStore = true
   }
 }
 
@@ -25,6 +30,17 @@ const actions = {
     try {
       const { data } = await getClassList()
       commit('SET_CLASS', data)
+      return data
+    } catch (error) {
+      // do nothing
+    }
+  },
+  async getCityList({ commit, state }) {
+    if (state.cityList.everStore) return state.cityList.data
+
+    try {
+      const { data } = await getCityList()
+      commit('SET_CITY', data)
       return data
     } catch (error) {
       // do nothing
